@@ -18,7 +18,7 @@ class Instance(game.GameObject):
 		grabs all the necessary properties from the class
 		and its parents and applies them to the instance
 		'''
-		game.GameObject.__init__(self)
+		super(Instance, self).__init__(physics.Body2D(5), graphics.RectSprite2D((10, 10)))
 		self.group = None
 		self._class = _class
 

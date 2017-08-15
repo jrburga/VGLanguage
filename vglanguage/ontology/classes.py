@@ -4,9 +4,16 @@ class Class(object):
 	'''
 	def __init__(self, name):
 		self.name = name
-		self.props = {}
+		self._props = {}
 		self._parent = None
 		self.children = []
+		
+	@property
+	def subclasses(self):
+		subclasses = []
+		for child in self.children:
+			subclasses += [child] + child.subclasses
+		return subclasses
 
 	@property
 	def parent(self):

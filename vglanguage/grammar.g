@@ -56,7 +56,7 @@ description: classname [":" assignments]
 classname: string | compound_name
 assignments: assignment+
 assignment: string "=" (value | function)
-function: string "(" value ("," value)* ")"
+function: string "(" [value ("," value)*] ")"
 negfunction: "~" function
 compound_name: string ">" string 
 
@@ -65,6 +65,7 @@ value: string
      | number
      | "True" -> true
      | "False"-> false
+     | "*"    -> all
 vector: "(" number ("," number)* ")"
 string: CNAME 
 number: SIGNED_NUMBER

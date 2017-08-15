@@ -73,13 +73,15 @@ class Tree2Game(Transformer):
 
 	def rules(self, rules):
 		return rules
-	def rule(self, rule):
-		return rule
+	def rule(self, (condition, effect)):
+		return condition, effect
+
 	def effects(self, effects):
-		return effects
+		return Chained(*effects)
 
 	def conditions(self, conditions):
-		return conditions
+		return Composition(*conditions)
+		
 	def condition(self, (condition, )):
 		return condition
 
@@ -104,7 +106,7 @@ class Tree2Game(Transformer):
 
 	def description(self, args):
 		if len(args) > 1:
-			args[0].props = args[1]
+			args[0]._props = args[1]
 		return args[0]
 
 
@@ -145,11 +147,15 @@ class Tree2Game(Transformer):
 		return tuple(vector)
 
 	def function(self, args):
-		return args
+		return eval(args[0])(args[1:])
 
 	def negfunction(self, (function, )):
-		function.insert(0, '~')
-		return function
+		# function = [Not(function[0])] + function[1:]
+		return Not(function)
+
+	def all(self, all):
+		# possibly a nifty little thing to use.
+		return 'root'
 
 	true  = lambda self, _: True
 	false = lambda self, _: False
@@ -164,62 +170,3 @@ with open('grammar.g') as g:
 	
 
 # 	def class(self, description):
-
-if __name__ == '__main__':
-	game_string = '''
-Game < SideView : gravity=(0, -10)
-#################################
-#   Comments are pretty cool    #
-#################################  
-Classes  # This is a Comment
-	ClassName :something=else bool=False function=function (1, 1) {
-		ChildClass : more=args {
-			SubChildClass
-			multiClass
-		}
-	}
-	SuperClass > Predefined : arguments=10 {
-		SubClass 
-	}
-	SingleClass
-
-Rules
-	~condition(arg, arg) & condition(part) > effect(1), effect(3)
-	another(arg) > effect(3)
-
-GroupTypes
-	GroupType1
-
-TerminationRules
-	condition(arg) & another(arg) > effect(arg)
-
-ActionSets
-	Basic {
-		INPUT1 & INPUT4 : inactive > Action(arguments), Action(arguments)
-		INPUT2 & INPUT5 > Action(arguments)
-	}
-	Another {
-		INPUT3 > Action(arguments)
-	}
-	'''
-
-	level_string = '''
-Level
-Player {
-	(44, 201, 3.1) : health=100 color=BLUE
-	(33, 10, 10)
-}
-Enemy {
-	(20.1, 2, 0) : controller=Random
-}
-'''
-	pp = pprint.PrettyPrinter(indent=4)
-	game = game_parser.parse(game_string)
-	level = level_parser.parse(level_string)
-
-	print game[1]['classes']
-
-	pp.pprint(game)
-	pp.pprint(level)
-	
-

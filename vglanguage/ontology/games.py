@@ -1,6 +1,7 @@
 from vgengine.game import *
 
-
+def quit(scene, event):
+	scene.quit()
 
 class BasicRoom(Room):
 	'''
@@ -16,6 +17,10 @@ class BasicScene(Scene):
 	'''
 	def __init__(self, size, fps):
 		Scene.__init__(self, graphics.Graphics2D(size), physics.Physics2D(1./fps), resources.Resources())
+		self.graphics.camera.size = size
+		self.fps = fps
+
+		self.add_event_handler('quit', quit)
 
 	def add_instance(self, game_object):
 		self.room.add(game_object)
@@ -32,8 +37,11 @@ class BasicGame(Game):
 	world.
 	'''
 	def __init__(self, scene):
-		self.fps = fps
 		Game.__init__(self, scene)
+		self.fps = scene.fps
+
+	def run(self):
+		super(BasicGame, self).run(self.fps)
 
 
 if __name__ == '__main__':

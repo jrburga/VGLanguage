@@ -1,0 +1,6 @@
+*.pyc
+\build
+\dist
+\vgengine.egg-info
+files.txt
+MANIFEST

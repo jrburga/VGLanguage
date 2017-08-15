@@ -7,13 +7,30 @@ class Class(object):
 		self._props = {}
 		self._parent = None
 		self.children = []
-		
+
+	@property
+	def names(self):
+		names = [self.name]
+		if self.parent:
+			names += self.parent.names
+		return names
+
 	@property
 	def subclasses(self):
 		subclasses = []
 		for child in self.children:
 			subclasses += [child] + child.subclasses
 		return subclasses
+
+	@property
+	def leaves(self):
+		leaves = []
+		for child in self.children:
+			if child.children:
+				leaves += child.leaves
+			else:
+				leaves += [child]
+		return leaves
 
 	@property
 	def parent(self):
@@ -27,8 +44,8 @@ class Class(object):
 		new_parent.children.append(self)
 
 	def get_prop(self, prop_name):
-		if prop_name in self.props:
-			return self.props[prop_name]
+		if prop_name in self._props:
+			return self._props[prop_name]
 		elif self.parent:
 			return self.parent.get_prop(prop_name)
 

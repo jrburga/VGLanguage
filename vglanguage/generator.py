@@ -9,18 +9,19 @@ Game < SideView : gravity=(0, -10)
 #   Comments are pretty cool    #
 #################################  
 Classes  # This is a Comment
-	Bird {
-		Chicken 
+	Bird : color=RED {
+		Chicken
 		Duck {
-			Mallard
+			Mallard : color=GREEN
 		}
 	}
-	Fish {
+	Fish : color=BLUE {
 		Trout
-		Tuna
+		Tuna : color=YELLO
 	}
+
 Rules
-	~Collision(Bird, Fish) > Kill(Bird), Kill(Fish)
+	Collision(Bird, Fish) > Nothing()
 	'''
 
 	level_string = '''
@@ -30,7 +31,10 @@ Mallard {
 	(20, 20, 0)
 }
 Trout {
-	(-20, 20, 0)
+	(0, 10, 0)
+}
+Chicken {
+	(30, 30, 0)
 }
 '''
 	pp = pprint.PrettyPrinter(indent=4)
@@ -39,8 +43,11 @@ Trout {
 
 	basic_scene = BasicScene((300, 300), 60)
 
+	for leaf in game[1]['classes'].leaves:
+		print leaf.name
+
 	classes = {}
-	for subclass in game[1]['classes'].subclasses:
+	for subclass in game[1]['classes'].leaves:
 		classes[subclass.name] = subclass
 
 	for rule in game[1]['rules']:

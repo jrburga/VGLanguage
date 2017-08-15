@@ -81,7 +81,7 @@ class Tree2Game(Transformer):
 
 	def conditions(self, conditions):
 		return Composition(*conditions)
-		
+
 	def condition(self, (condition, )):
 		return condition
 
@@ -111,7 +111,8 @@ class Tree2Game(Transformer):
 
 
 	def classname(self, (classname, )):
-		# print classname
+		assert classname != 'root', 'The "root" classname is a key word and cannot be used to define new classes'
+		assert classname != 'all', 'The "all" classname is a key word and cannot be used to define new classes'
 		return Class(str(classname))
 
 	# def simple_name(self, (classname, )):

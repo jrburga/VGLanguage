@@ -21,9 +21,10 @@ class InstanceCondition(Condition):
 	def instances(self):
 		rest = set()
 		for instance in self.scene.room.game_objects:
-			if instance.name not in self._instances or instance.name in rest:
-				rest.add(instance.name)
-				self._instances[instance.name].add(instance)
+			for name in instance.names:
+				if name not in self._instances or name in rest:
+					rest.add(name)
+					self._instances[name].add(instance)
 		return self._instances
 
 # Some useful classes probably.
@@ -82,31 +83,45 @@ class Not(InstanceCondition):
 class Collision(InstanceCondition):
 	def __init__(self, (class_name1, class_name2)):
 		super(Collision, self).__init__()
-		self.classes = set([class_name1, class_name2])
+		self.classes = [class_name1, class_name2]
 		self.colliding = False
 
 		self.event_triggers = self.collision_triggers()
 
 	def collision_triggers(self):
 		# create event handler to raise collision flags
-		test = lambda event: set([event.go1.name, event.go2.name]) == self.classes
-		def collision(self, scene, event):
-			print 'collision'
-			if test(event):
-				self.colliding = True
-				self.instances[event.go1.name].append(event.go1)
-				self.instances[event.go2.name].append(event.go2)
-		def separation(self, scene, event):
-			print 'separate'
-			if test(event):
-				self.colliding = False
-				self.instances[event.go1.name].remove(event.go1)
-				self.instances[event.go2.name].remove(event.go1)
+		def test(event):
+			check = [False, False]
+			check_r = [False, False]
+			if self.classes[0] in event.game_objects[0].names:
+				if self.classes[1]  in event.game_objects[1].names:
+					return (True, (self.classes[0], self.classes[1]))
 
-		return [('collision', collision), ('separate', separation)]
+			if self.classes[0] in event.game_objects[1].names:
+				if self.classes[1] in event.game_objects[0].names:
+					return (True, (self.classes[1], self.classes[0]))
+
+			return (False, None)
+
+
+		def collision(scene, event):
+			result, classes = test(event)
+			if result:
+				print 'collision', self.classes
+				self.colliding = True
+				self._instances[classes[0]].add(event.game_objects[0])
+				self._instances[classes[1]].add(event.game_objects[1])
+		def separation(scene, event):
+			result, classes = test(event)
+			if result:
+				print 'separation', self.classes
+				self.colliding = False
+				self._instances[classes[0]].remove(event.game_objects[0])
+				self._instances[classes[1]].remove(event.game_objects[1])
+
+		return [('collision', collision), ('separation', separation)]
 
 	def test(self):
-		print self, self.colliding
 		return self.colliding
 
 if __name__ == '__main__':

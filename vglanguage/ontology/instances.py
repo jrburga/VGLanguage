@@ -18,13 +18,24 @@ class Instance(game.GameObject):
 		grabs all the necessary properties from the class
 		and its parents and applies them to the instance
 		'''
-		super(Instance, self).__init__(physics.Body2D(5), graphics.RectSprite2D((10, 10)))
+		super(Instance, self).__init__(
+			physics.Body2D(5),
+			physics.BoxShape2D((10, 10)), 
+			graphics.RectSprite2D((10, 10), color=_class.get_prop('color'))
+		)
 		self.group = None
 		self._class = _class
+
+	def kill(self):
+		self.room.remove(self)
 
 	@property
 	def name(self):
 		return self._class.name
+
+	@property
+	def names(self):
+		return self._class.names
 
 	@property
 	def parent(self):

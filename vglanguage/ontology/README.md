@@ -14,18 +14,18 @@ In general, the formal use of semantics is to allow operations on our lexicon fo
 
 Then, there are the things that are variable in our lexicon represented in our ontology as Classes. For instance, if we have defined a game with the classes
 
-`
+```
 Bird {
 	Duck
 	Chicken
 }
-`
+```
 
 Then we have introduced these words into our Lexicon, and they simply produce the following meanings with respect to our Lexicon:
 
-Bird := {the set of things that are a Bird}
-Duck := {the set of things that are a Duck}
-Chicken := {x : such that x is a Chicken}
+* Bird := {the set of things that are a Bird}
+* Duck := {the set of things that are a Duck}
+* Chicken := {x : such that x is a Chicken}
 
 The last example is just me introducing some new but hopefully familiar notation as it is what I will start having to use for the more complex definitions.
 

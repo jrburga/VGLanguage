@@ -14,12 +14,10 @@ In general, the formal use of semantics is to allow operations on our lexicon fo
 
 Then, there are the things that are variable in our lexicon represented in our ontology as Classes. For instance, if we have defined a game with the classes
 
-```
-Bird {
+```Bird {
 	Duck
 	Chicken
-}
-```
+}```
 
 Then we have introduced these words into our Lexicon, and they simply produce the following meanings with respect to our Lexicon:
 
@@ -69,17 +67,13 @@ For starters, when we have a rule, we start with both Sets and SetsPrime as bein
 
 Collision(A, B) results in:
 
-```
-A' := A' intersect {a : a in A and a is colliding with b in B}
-B' := B' intersect {b : b in B and b is colliding with a in A}
-```
+```A' := A' intersect {a : a in A and a is colliding with b in B}
+B' := B' intersect {b : b in B and b is colliding with a in A}```
 
 This format generalizes the behavior in a way that is nice. I'm going to introduce one more bit of notation to make this nicer (note, I wonder if we could use this instead? Nah, it's fine)
 
-```
-A' := A' intersect Collision(A)(B)
-B' := B' intersect Collision(B)(A)
-```
+```A' := A' intersect Collision(A)(B)
+B' := B' intersect Collision(B)(A)```
 
 where Collision(A)(B) and Collision(B)(A) have respectively the same meanings as the previous definitions, but using a different notation.
 
@@ -97,25 +91,19 @@ Collision(Duck, Chicken) & ~Collision(Duck, Goose) > Kill(Duck)
 
 This should effectively only kill the Duck that is both colliding with the Chicken and not colliding with the Goose. We start with:
 
-```
-Duck = Duck'
+```Duck = Duck'
 Goose = Goose'
-Chicken = Chicken'
-```
+Chicken = Chicken'```
 
 Apply first condition:
 
-```
-Duck' := Duck' intersect Collision(Duck)(Chicken)
-Chicken' := Chicken' intersect Collision(Chicken)(Duck)
-```
+```Duck' := Duck' intersect Collision(Duck)(Chicken)
+Chicken' := Chicken' intersect Collision(Chicken)(Duck)```
 
 Apply second condition:
 
-```
-Duck' := Duck' intersect ~Collision(Duck)(Goose)
-Goose' := Goose' intersect ~Collision(Goose)(Duck)
-```
+```Duck' := Duck' intersect ~Collision(Duck)(Goose)
+Goose' := Goose' intersect ~Collision(Goose)(Duck)```
 
 This chain of Conditions results in exactly what we want, so when Kill(Duck) is applied, it is applied to Duck', which is now
 

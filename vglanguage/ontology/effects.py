@@ -29,7 +29,7 @@ def SetResource(instance, (resource, value)):
 	instance.resources[resource].value = value
 
 def Kill(instance):
-	print instance.name, instance.components
+	print 'killing -- ', instance, instance.components
 	instance.kill()
 	# print instance.components
 

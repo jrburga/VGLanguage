@@ -5,4 +5,3 @@ from controllers import *
 from effects import *
 from games import *
 from classes import *
-from instances import *

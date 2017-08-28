@@ -41,7 +41,7 @@ class Class(object):
 		if self.parent:
 			self.parent.children.remove(self)
 		self._parent = new_parent
-		new_parent.children.append(self)
+		self._parent.children.append(self)
 
 	def get_prop(self, prop_name):
 		if prop_name in self._props:
@@ -60,9 +60,10 @@ class Root(Class):
 	'''
 	def __init__(self):
 		Class.__init__(self, 'root')
-		self.props = {
-			'mass' : 5,
-			'gravity': None
+		self._props = {
+			'mass'   : 5,
+			'gravity': None,
+			'color'  : 'white'
 		}
 
 class RECT(object):

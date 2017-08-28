@@ -30,6 +30,7 @@ class InstanceCondition(Condition):
 # Some useful classes probably.
 class Composition(InstanceCondition):
 	def __init__(self, *conditions):
+		# print 'composition'
 		super(Composition, self).__init__()
 		self.conditions = conditions
 		for condition in conditions:

@@ -32,7 +32,9 @@ class Instance(game.GameObject):
 		self._class = _class
 
 	def kill(self):
-		self.room.remove(self)
+		print self.room
+		if self.room:
+			self.room.remove(self)
 
 	@property
 	def name(self):
@@ -121,3 +123,8 @@ class Instance(game.GameObject):
  			r[resource.name] = resource
  		return r
 		
+	def __str__(self):
+		return '<'+self.name+' instance '+str(id(self))+'>' 
+
+	def __repr__(self):
+		return self.__str__()

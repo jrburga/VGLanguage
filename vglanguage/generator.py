@@ -10,21 +10,21 @@ Game < SideView : gravity=(0, 0) :
 #   Comments are pretty cool    #
 #################################  
 Classes  # This is a Comment
-	Bird {
+	Bird : gravity=(0, -100) : {
 		Chicken : color=RED shape=RECT((1, 2)):
 		Duck {
 			Mallard : color=GREEN :
 			Whitetail : color=WHITE :
 		}
 	}
-	Fish {
+	Fish : gravity=(0, 100) : {
 		Trout  : color=BLUE   :
 		Tuna   : color=YELLOW :
-		Salmon : color=PINK   :
+		Salmon : color=SALMON   :
 	}
-	Human : gravity=(0, 0) color=LIGHTBLUE :
+	Human : actionset=BasicMotion controller=Keyboard gravity=(0, 0) color=LIGHTBLUE :
 Rules
-	Collision(Bird, Fish) > Kill(Fish)
+	Collision(Bird, *) > Kill(Fish)
 
 	'''
 
@@ -38,7 +38,7 @@ Trout {
 }
 Chicken {
 	(30, 60, 0)
-}
+}	
 Tuna {
 	(-30, -60, 0)
 }
@@ -65,7 +65,7 @@ Human {
 	# 	print leaf.name
 
 	classes = {}
-	for subclass in game[1]['classes'].leaves:
+	for subclass in game[1]['classes'].subclasses:
 		print subclass.name
 		classes[subclass.name] = subclass
 

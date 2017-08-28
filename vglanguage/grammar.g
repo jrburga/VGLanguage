@@ -10,7 +10,7 @@ instance: vector [":" assignments]
 // GameDescription
 // ***************
 game: game_header game_desc
-game_header: "Game" "<" (function | string) [":" assignments]
+game_header: "Game" "<" (function | string) [":" assignments ":"]
 game_desc: (class_set | groups_set | rules_set | termination_set | action_set)*
 
 // ActionSets
@@ -38,7 +38,8 @@ termination_rule: conditions [">" effects]
 rules_set: "Rules" rules
 rules: rule+
 rule: conditions ">" effects
-effects: function ("," function)*
+effects: effect ("," effect)*
+effect: string "(" [value ("," value)*] ")"
 conditions: condition ("&" condition)*
 condition: function | negfunction
 
@@ -51,8 +52,8 @@ groups_set: "GroupTypes" classes
 // ***************
 class_set: "Classes" classes
 classes: class_desc+
-class_desc: description ["{" classes "}"]
-description: classname [":" assignments]
+class_desc: description ["{" classes "}"] 
+description: classname [":" assignments ":"]
 classname: string | compound_name
 assignments: assignment+
 assignment: string "=" (value | function)

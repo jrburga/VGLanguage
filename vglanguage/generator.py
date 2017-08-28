@@ -4,37 +4,54 @@ import pprint
 
 if __name__ == '__main__':
 	game_string = '''
-Game < SideView : gravity=(0, -10)
+
+Game < SideView : gravity=(0, 0) :
 #################################
 #   Comments are pretty cool    #
 #################################  
 Classes  # This is a Comment
-	Bird : color=RED {
-		Chicken
+	Bird {
+		Chicken : color=RED shape=RECT((1, 2)):
 		Duck {
-			Mallard : color=GREEN
+			Mallard : color=GREEN :
+			Whitetail : color=WHITE :
 		}
 	}
-	Fish : color=BLUE {
-		Trout
-		Tuna : color=YELLO
+	Fish {
+		Trout  : color=BLUE   :
+		Tuna   : color=YELLOW :
+		Salmon : color=PINK   :
 	}
-
+	Human : gravity=(0, 0) color=LIGHTBLUE :
 Rules
-	Collision(Bird, Fish) > Nothing()
+	Collision(Bird, Fish) > Kill(Fish)
+
 	'''
 
 	level_string = '''
 Level
 Mallard {
-	(0, 0, 0)
-	(20, 20, 0)
+	(0, 60, 0)
 }
 Trout {
-	(0, 10, 0)
+	(0, -60, 0)
 }
 Chicken {
-	(30, 30, 0)
+	(30, 60, 0)
+}
+Tuna {
+	(-30, -60, 0)
+}
+Whitetail {
+	(-30, 60, 0)
+}
+Salmon {
+	(30, -60, 0)
+	(-60, -60, 0)
+	(-60, -60, 0)
+}
+Human {
+	(0, 0, 0)
 }
 '''
 	pp = pprint.PrettyPrinter(indent=4)
@@ -42,20 +59,22 @@ Chicken {
 	level = gparser.level_parser.parse(level_string)
 
 	basic_scene = BasicScene((300, 300), 60)
+	basic_scene.physics.space.gravity = game[0][1]['gravity']
 
-	for leaf in game[1]['classes'].leaves:
-		print leaf.name
+	# for leaf in game[1]['classes'].leaves:
+	# 	print leaf.name
 
 	classes = {}
 	for subclass in game[1]['classes'].leaves:
+		print subclass.name
 		classes[subclass.name] = subclass
 
 	for rule in game[1]['rules']:
 		basic_scene.add_condition_handler(rule[0], rule[1])
 
-	# pp.pprint(classes)
-	# pp.pprint(game)
-	# pp.pprint(level)
+	pp.pprint(classes)
+	pp.pprint(game)
+	pp.pprint(level)
 	for _class in level[1]:
 		for instance in level[1][_class]:
 			new_instance = Instance(classes[_class])

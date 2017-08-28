@@ -48,6 +48,11 @@ class Class(object):
 			return self._props[prop_name]
 		elif self.parent:
 			return self.parent.get_prop(prop_name)
+		else:
+			return None
+
+	def create_components(self):
+		return ()
 
 class Root(Class):
 	'''
@@ -56,5 +61,10 @@ class Root(Class):
 	def __init__(self):
 		Class.__init__(self, 'root')
 		self.props = {
-			'mass' : 5
+			'mass' : 5,
+			'gravity': None
 		}
+
+class RECT(object):
+	def __init__(self, size):
+		print 'creating rect'

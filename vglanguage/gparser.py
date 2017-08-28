@@ -77,7 +77,18 @@ class Tree2Game(Transformer):
 		return condition, effect
 
 	def effects(self, effects):
-		return Chained(*effects)
+		return Chain(*effects)
+
+	def effect(self, function):
+		func = eval(function[0])
+		args = function[1:]
+		if args:
+			class_name = args[0]
+			args = args[1:]
+			return InstanceEffect(class_name, args, func)
+		else:
+			return EmptyEffect(func)
+
 
 	def conditions(self, conditions):
 		return Composition(*conditions)
@@ -122,7 +133,6 @@ class Tree2Game(Transformer):
 		return str(first)
 
 	def assignments(self, props):
-		# print props
 		all_props = {}
 		for prop in props:
 			all_props.update(prop)

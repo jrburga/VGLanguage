@@ -19,10 +19,15 @@ class Instance(game.GameObject):
 		and its parents and applies them to the instance
 		'''
 		super(Instance, self).__init__(
+			# _class.create_components()
 			physics.Body2D(5),
 			physics.BoxShape2D((10, 10)), 
 			graphics.RectSprite2D((10, 10), color=_class.get_prop('color'))
 		)
+		# print self.body.gravity
+
+		if _class.get_prop('gravity') != None:
+			self.body.gravity = _class.get_prop('gravity')
 		self.group = None
 		self._class = _class
 
@@ -111,5 +116,8 @@ class Instance(game.GameObject):
 
  	@property
  	def resources(self):
- 		return self.get_components(resources.Resource)
+ 		r = {}
+ 		for resource in self.get_components(resources.Resource):
+ 			r[resource.name] = resource
+ 		return r
 		

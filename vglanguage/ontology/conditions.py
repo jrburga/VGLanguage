@@ -124,11 +124,11 @@ class Collision(InstanceCondition):
 	def test(self):
 		return self.colliding
 
-if __name__ == '__main__':
-	simple_scene = Scene()
-	simple_scene.room._game_objects.add(Instance(Class('five')))
-	# print simple_scene.room.game_objects
-	collision_condition = Collision(('one', 'two'))
-	another_collision_condition = Collision(('three', 'four'))
-	comp = Composition(InstanceCondition())
-	simple_scene.add_condition_handler(comp, lambda scene, condition: True)
+# if __name__ == '__main__':
+# 	simple_scene = Scene()
+# 	simple_scene.room._game_objects.add(Instance(Class('five')))
+# 	# print simple_scene.room.game_objects
+# 	collision_condition = Collision(('one', 'two'))
+# 	another_collision_condition = Collision(('three', 'four'))
+# 	comp = Composition(InstanceCondition())
+# 	simple_scene.add_condition_handler(comp, lambda scene, condition: True)

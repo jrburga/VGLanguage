@@ -1,7 +1,10 @@
-from actionsets import *
-from classes import *
-from conditions import *
-from controllers import *
-from effects import *
 from games import *
-from classes import *
+
+from objects import *
+from components import *
+
+from conditions import *
+from effects import *
+
+from controllers import *
+from actionsets import *

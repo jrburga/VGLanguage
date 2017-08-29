@@ -19,12 +19,6 @@ class InstanceCondition(Condition):
 
 	@property
 	def instances(self):
-		rest = set()
-		for instance in self.scene.room.game_objects:
-			for name in instance.names:
-				if name not in self._instances or name in rest:
-					rest.add(name)
-					self._instances[name].add(instance)
 		return self._instances
 
 # Some useful classes probably.
@@ -48,11 +42,10 @@ class Composition(InstanceCondition):
 
 	@property
 	def instances(self):
-		self._instances = defaultdict(lambda: set())
 		for condition in self.conditions:
-			for class_name in condition.instances:
+			for class_name in condition.instances: #instances is a dict
 				self._instances[class_name] = self._instances[class_name].union(condition.instances[class_name])
-		return super(Composition, self).instances
+		return self._instances
 
 	def test(self):
 		for condition in self.conditions:
@@ -112,6 +105,7 @@ class Collision(InstanceCondition):
 				self.colliding = True
 				self._instances[classes[0]].add(event.game_objects[0])
 				self._instances[classes[1]].add(event.game_objects[1])
+
 		def separation(scene, event):
 			result, classes = test(event)
 			if result:
@@ -124,6 +118,8 @@ class Collision(InstanceCondition):
 
 	def test(self):
 		return self.colliding
+
+
 
 # if __name__ == '__main__':
 # 	simple_scene = Scene()

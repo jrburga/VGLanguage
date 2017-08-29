@@ -1,5 +1,8 @@
 # Used as an abstraction for the parser to generate the effects used by the game.
 # Need to add that effects also apply to groups, not just instances.
+
+from copy import deepcopy
+
 def Chain(*effects):
 	def effect(scene, condition):
 		for fx in effects:
@@ -13,7 +16,17 @@ def EmptyEffect(apply_effect):
 
 def InstanceEffect(class_name, args, apply_effect):
 	def effect(scene, condition):
-		for instance in condition.instances[class_name]:
+		instances = set()
+		if class_name in condition.instances:
+			for instance in condition.instances[class_name]:
+				instances.add(instance)
+		else:
+			for instance in scene.room.game_objects:
+				
+				if class_name in instance.names:
+					instances.add(instance)
+					
+		for instance in instances:
 			if args:
 				apply_effect(instance, args)
 			else:

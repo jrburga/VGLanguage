@@ -11,7 +11,7 @@ Game < SideView : gravity=(0, 0) :
 #################################  
 Classes  # This is a Comment
 	Bird : gravity=(0, -100) : {
-		Chicken : color=RED shape=RECT((1, 2)):
+		Chicken : color=RED :
 		Duck {
 			Mallard : color=GREEN :
 			Whitetail : color=WHITE :
@@ -22,10 +22,26 @@ Classes  # This is a Comment
 		Tuna   : color=YELLOW :
 		Salmon : color=SALMON   :
 	}
-	Human : actionset=BasicMotion controller=Keyboard gravity=(0, 0) color=LIGHTBLUE :
-Rules
-	Collision(Bird, *) > Kill(Fish)
+	Human : actionset=BasicMotion  
+			controller=KEYBOARD 
+			health=RESOURCE
+			gravity=(0, 0)
+			shape=CIRCLE
+			size=10
+			color=LIGHTBLUE :
 
+	Platform : body=STATIC 
+			   shape=RECT
+			   size=(10, 100) :
+Rules
+	Collision(Bird, Human) > Kill(Bird), Kill(Human)
+ActionSets
+	BasicMotion {
+		UP   > Move((0 , 1), 1)
+		DOWN > Move((0 ,-1), 1)
+		LEFT > Move((-1, 0), 1)
+		RIHT > Move((1 , 0), 1)
+	}
 	'''
 
 	level_string = '''
@@ -63,14 +79,22 @@ Human {
 
 	# for leaf in game[1]['classes'].leaves:
 	# 	print leaf.name
-
+	actionsets = game[1]['action_set']
+	print actionsets
 	classes = {}
 	for subclass in game[1]['classes'].subclasses:
-		print subclass.name
+		# print subclass.name
+		if 'actionset' in subclass._props:
+			subclass._props['actionset'] = actionsets[subclass._props['actionset']]
+
+		if 'controller' in subclass._props:
+			subclass._props
 		classes[subclass.name] = subclass
 
 	for rule in game[1]['rules']:
 		basic_scene.add_condition_handler(rule[0], rule[1])
+
+	# print 'human', game[1]['classes'].find('Human')._props
 
 	pp.pprint(classes)
 	pp.pprint(game)

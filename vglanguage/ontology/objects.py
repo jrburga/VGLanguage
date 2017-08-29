@@ -1,6 +1,101 @@
 from vgengine import game
 from vgengine.systems import graphics, physics, resources
 from collections import defaultdict
+
+class Class(object):
+	'''
+	A simple container for classes and their properties
+	'''
+	def __init__(self, name):
+		self.name = name
+		self._props = {}
+		self._parent = None
+		self.children = []
+		self.instances = set()
+		self.components = set()
+
+	def find(self, name):
+		if self.name == name: 
+			return self
+		else:
+			for subclass in self.subclasses:
+				if subclass.name == name:
+					return subclass
+
+
+	@property
+	def names(self):
+		names = [self.name]
+		if self.parent:
+			names += self.parent.names
+		return names
+
+	@property
+	def subclasses(self):
+		subclasses = []
+		for child in self.children:
+			subclasses += [child] + child.subclasses
+		return subclasses
+
+	@property
+	def leaves(self):
+		leaves = []
+		for child in self.children:
+			if child.children:
+				leaves += child.leaves
+			else:
+				leaves += [child]
+		return leaves
+
+	@property
+	def parent(self):
+		return self._parent
+
+	@parent.setter
+	def parent(self, new_parent):
+		if self.parent:
+			self.parent.children.remove(self)
+		self._parent = new_parent
+		self._parent.children.append(self)
+
+	def get_prop(self, prop_name):
+		if prop_name in self._props:
+			return self._props[prop_name]
+		elif self.parent:
+			return self.parent.get_prop(prop_name)
+		else:
+			return None
+
+	def set_prop(self, prop_name, value):
+		self._props[prop_name] = value
+
+
+	def create_instance(self):
+		return Instance(self)
+
+	def create_components(self):
+		created_components = set()
+		for component in self.components:
+			created_components.add(component.create())
+		return created_components
+
+
+class Root(Class):
+	'''
+	Class with a few default properties
+	'''
+	def __init__(self):
+		super(Root, self).__init__('root')
+		self._props = {
+			'mass'   : 5,
+			'gravity': None,
+			'color'  : 'white'
+		}
+		self.components = set([
+
+			])
+
+
 '''
 In general, the Collider and the Shape are the same.
 
@@ -18,6 +113,7 @@ class Instance(game.GameObject):
 		grabs all the necessary properties from the class
 		and its parents and applies them to the instance
 		'''
+
 		super(Instance, self).__init__(
 			# _class.create_components()
 			physics.Body2D(5),
@@ -31,8 +127,11 @@ class Instance(game.GameObject):
 		self.group = None
 		self._class = _class
 
+		self._class.instances.add(self)
+
+
 	def kill(self):
-		print self.room
+		self._class.instances.remove(self)
 		if self.room:
 			self.room.remove(self)
 

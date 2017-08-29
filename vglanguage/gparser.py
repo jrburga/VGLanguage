@@ -76,12 +76,23 @@ class Tree2Game(Transformer):
 	def rule(self, (condition, effect)):
 		return condition, effect
 
+	def action_effects(self, effects):
+		return Chain(*effects)
+
+	def action_effect(self, function):
+		func = eval(function[0])
+		args = function[1:]
+		if args:
+			return func(args)
+		else:
+			return func
+
 	def effects(self, effects):
 		return Chain(*effects)
 
 	def effect(self, function):
 		func = eval(function[0])
-		args = function[1:]
+		args = function[1:] 
 		if args:
 			class_name = args[0]
 			args = args[1:]

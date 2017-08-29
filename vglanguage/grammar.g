@@ -20,7 +20,9 @@ type_sets: type_set+
 type_set: type_name "{" actions "}"
 type_name: string
 actions: action+
-action: inputs ">" effects
+action: inputs ">" action_effects
+action_effects: action_effect ("," action_effect)*
+action_effect: string "(" [value ("," value)*] ")"
 inputs: default_inputs | inactive_inputs
 inactive_inputs: default_inputs ":" "inactive"
 default_inputs: string ("&" string)*

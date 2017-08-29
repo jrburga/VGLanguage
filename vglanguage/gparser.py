@@ -171,6 +171,9 @@ class Tree2Game(Transformer):
 	def function(self, args):
 		return eval(args[0])(args[1:])
 
+	def component(self, args):
+		return [eval(args[0]), args[1:]]
+
 	def negfunction(self, (function, )):
 		# function = [Not(function[0])] + function[1:]
 		return Not(function)

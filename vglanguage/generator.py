@@ -23,18 +23,16 @@ Classes  # This is a Comment
 		Salmon : color=SALMON   :
 	}
 	Human : actionset=BasicMotion  
-			controller=KEYBOARD 
-			health=RESOURCE
+			controller=Keyboard 
+			health=RESOURCE(100)
 			gravity=(0, 0)
-			shape=CIRCLE
-			size=10
+			shape=CIRCLE(5)
 			color=LIGHTBLUE :
 
-	Platform : body=STATIC 
-			   shape=RECT
-			   size=(10, 100) :
+	Platform : bodytype=STATIC 
+			   shape=RECT(100, 10) :
 Rules
-	Collision(Bird, Human) > Kill(Bird), Kill(Human)
+	Collision(Bird, Human) > Kill(Fish), Kill(Human)
 ActionSets
 	BasicMotion {
 		UP   > Move((0 , 1), 1)
@@ -69,6 +67,9 @@ Salmon {
 Human {
 	(0, 0, 0)
 }
+Platform {
+	(0, -100, 0)
+}
 '''
 	pp = pprint.PrettyPrinter(indent=4)
 	game = gparser.game_parser.parse(game_string)
@@ -94,17 +95,17 @@ Human {
 	for rule in game[1]['rules']:
 		basic_scene.add_condition_handler(rule[0], rule[1])
 
-	# print 'human', game[1]['classes'].find('Human')._props
+	
 
-	pp.pprint(classes)
-	pp.pprint(game)
-	pp.pprint(level)
+	# pp.pprint(classes)
+	# pp.pprint(game)
+	# pp.pprint(level)
 	for _class in level[1]:
 		for instance in level[1][_class]:
 			new_instance = Instance(classes[_class])
 			new_instance.position = instance['transform'][:-1]
 			new_instance.rotation = instance['transform'][-1]
 			basic_scene.room.add(new_instance)
-
+	print 'human', list(game[1]['classes'].find('Human').instances)[0].resources
 	basic_game = BasicGame(basic_scene)
 	basic_game.run()

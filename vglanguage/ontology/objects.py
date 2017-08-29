@@ -1,6 +1,7 @@
 from vgengine import game
 from vgengine.systems import graphics, physics, resources
 from collections import defaultdict
+from components import *
 
 class Class(object):
 	'''
@@ -75,8 +76,27 @@ class Class(object):
 
 	def create_components(self):
 		created_components = set()
-		for component in self.components:
-			created_components.add(component.create())
+
+		for prop in self._props:
+			value = self._props[prop]
+			if isinstance(value, list):
+				if value[0] == RESOURCE:
+					created_components.add(value[0](prop, *value[1]))
+		
+		body = eval(self.get_prop('bodytype'))
+		created_components.add(body(self.get_prop('mass')))
+
+		shape, size = self.get_prop('shape')
+		created_components.update(shape(size, self.get_prop('color')))
+
+		controller = self.get_prop('controller')
+		print controller
+		if controller:
+			created_components.add(eval(controller)())
+
+		actionset = self.get_prop('actionset')
+		print actionset
+
 		return created_components
 
 
@@ -87,9 +107,13 @@ class Root(Class):
 	def __init__(self):
 		super(Root, self).__init__('root')
 		self._props = {
-			'mass'   : 5,
-			'gravity': None,
-			'color'  : 'white'
+			'mass'      : 5,
+			'gravity'   : None,
+			'color'     : 'white',
+			'bodytype'  : 'DYNAMIC',
+			'shape'     : [RECT, (10, 10)],
+			'controller': None,
+			'actionset' : None, 
 		}
 		self.components = set([
 
@@ -115,10 +139,7 @@ class Instance(game.GameObject):
 		'''
 
 		super(Instance, self).__init__(
-			# _class.create_components()
-			physics.Body2D(5),
-			physics.BoxShape2D((10, 10)), 
-			graphics.RectSprite2D((10, 10), color=_class.get_prop('color'))
+			*_class.create_components()
 		)
 		# print self.body.gravity
 

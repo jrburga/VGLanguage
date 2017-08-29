@@ -58,7 +58,9 @@ class_desc: description ["{" classes "}"]
 description: classname [":" assignments ":"]
 classname: string | compound_name
 assignments: assignment+
-assignment: string "=" (value | function)
+assignment: string "=" (value | component)
+component: string "(" [value ("," value)*] ")"
+
 function: string "(" [value ("," value)*] ")"
 negfunction: "~" function
 compound_name: string ">" string 

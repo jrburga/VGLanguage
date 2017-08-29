@@ -1,7 +1,6 @@
 from vgengine.game import Condition, Event, Scene
 from collections import defaultdict
-from instances import Instance
-from classes import Class
+from objects import *
 
 class InstanceCondition(Condition):
 	def __init__(self):

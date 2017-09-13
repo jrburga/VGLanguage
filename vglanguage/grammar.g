@@ -85,3 +85,4 @@ COMMENT: "#"+ /./* NEWLINE
 %import common.NEWLINE
 %ignore WS
 %ignore COMMENT
+%ignore NEWLINE

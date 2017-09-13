@@ -68,6 +68,7 @@ compound_name: string ">" string
 value: string   
 	 | vector
      | number
+     | "inf"  -> infinity
      | "True" -> true
      | "False"-> false
      | "*"    -> all

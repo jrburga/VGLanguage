@@ -90,13 +90,17 @@ class Class(object):
 		created_components.update(shape(size, self.get_prop('color')))
 
 		controller = self.get_prop('controller')
-		print controller
 		if controller:
 			created_components.add(eval(controller)())
 
 		actionset = self.get_prop('actionset')
-		print actionset
-
+		actions = {}
+		if actionset:
+			for action in actionset:
+				# print action['effects']
+				actions.update({action['inputs'][0]: action['effects']})
+			# print 'actions', actions
+		created_components.add(resources.ActionSet(actions))
 		return created_components
 
 
@@ -114,10 +118,10 @@ class Root(Class):
 			'shape'     : [RECT, (10, 10)],
 			'controller': None,
 			'actionset' : None, 
+			'velocity'  : (0, 0),
+			'elasticity': 0.0,
+			'friction'  : 0.5
 		}
-		self.components = set([
-
-			])
 
 
 '''
@@ -137,16 +141,35 @@ class Instance(game.GameObject):
 		grabs all the necessary properties from the class
 		and its parents and applies them to the instance
 		'''
-
+		self._class = _class
 		super(Instance, self).__init__(
 			*_class.create_components()
 		)
 		# print self.body.gravity
 
+		# for shape in self.body.shapes:
+		# 	print 'elasticity', shape.elasticity
+
+
 		if _class.get_prop('gravity') != None:
 			self.body.gravity = _class.get_prop('gravity')
+
+		if _class.get_prop('velocity'):
+			self.body.velocity = _class.get_prop('velocity')
+
+		if _class.get_prop('elasticity'):
+			# print _class.get_prop('elasticity')
+			for shape in self.body.shapes:
+				shape.elasticity = _class.get_prop('elasticity')
+
+		if _class.get_prop('friction'):
+			for shape in self.body.shapes:
+				shape.friction = _class.get_prop('friction')
+				
+		# for shape in self.body.shapes:
+		# 	print 'elasticity', shape.elasticity
 		self.group = None
-		self._class = _class
+		
 
 		self._class.instances.add(self)
 
@@ -168,12 +191,13 @@ class Instance(game.GameObject):
 	def parent(self):
 		return self._class.parent
 
-	@property
-	def controller(self):
-		controllers = self.get_comoponents(resources.Controller)
-		if controllers:
-			return controllers[0]
-		return None
+	# Of course this was causing a bug....
+	# @property
+	# def controller(self):
+	# 	controllers = self.get_comoponents(resources.Controller)
+	# 	if controllers:
+	# 		return controllers[0]
+	# 	return None
 
 	@property
 	def actionset(self):
@@ -242,6 +266,13 @@ class Instance(game.GameObject):
  		for resource in self.get_components(resources.Resource):
  			r[resource.name] = resource
  		return r
+
+ 	@property
+ 	def collision_set(self):
+ 		collision_set = set()
+ 		for shape in self.body.shapes:
+ 			collision_set.update(set([c.parent for c in shape.collision_set]))
+ 		return collision_set
 		
 	def __str__(self):
 		return '<'+self.name+' instance '+str(id(self))+'>' 

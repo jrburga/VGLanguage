@@ -3,6 +3,12 @@
 
 from copy import deepcopy
 
+def Combo(*actions):
+	def action(go):
+		for ax in actions:
+			ax(go)
+	return action
+
 def Chain(*effects):
 	def effect(scene, condition):
 		for fx in effects:
@@ -45,6 +51,6 @@ def Kill(instance):
 	print 'killing -- ', instance, instance.components
 	instance.kill()
 	# print instance.components
-
+	
 def Nothing():
 	pass

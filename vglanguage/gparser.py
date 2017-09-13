@@ -77,7 +77,7 @@ class Tree2Game(Transformer):
 		return condition, effect
 
 	def action_effects(self, effects):
-		return Chain(*effects)
+		return Combo(*effects)
 
 	def action_effect(self, function):
 		func = eval(function[0])
@@ -157,6 +157,8 @@ class Tree2Game(Transformer):
 		return prop	
 
 	def value(self, (value, )):
+		if value == float('inf'):
+			print 'value evaluated', value
 		return value
 
 	def string (self, (string, )):
@@ -184,6 +186,7 @@ class Tree2Game(Transformer):
 
 	true  = lambda self, _: True
 	false = lambda self, _: False
+	infinity = lambda self, _: 10**50
 
 
 

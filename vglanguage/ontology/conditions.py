@@ -41,6 +41,7 @@ class Composition(InstanceCondition):
 
 	@property
 	def instances(self):
+		self._instances = defaultdict(lambda: set())
 		for condition in self.conditions:
 			for class_name in condition.instances: #instances is a dict
 				self._instances[class_name] = self._instances[class_name].union(condition.instances[class_name])
@@ -110,8 +111,10 @@ class Collision(InstanceCondition):
 			if result:
 				print 'separation', self.classes
 				self.colliding = False
-				self._instances[classes[0]].remove(event.game_objects[0])
-				self._instances[classes[1]].remove(event.game_objects[1])
+				if event.game_objects[0] in self._instances[classes[0]]:
+					self._instances[classes[0]].remove(event.game_objects[0])
+				if event.game_objects[1] in self._instances[classes[1]]:
+					self._instances[classes[1]].remove(event.game_objects[1])
 
 		return [('collision', collision), ('separation', separation)]
 

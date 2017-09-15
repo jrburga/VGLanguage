@@ -36,7 +36,7 @@ def CreateGame(game_string, level_string):
 		for instance in level[1][_class]:
 			new_instance = Instance(classes[_class])
 			new_instance.position = instance['transform'][:-1]
-			new_instance.rotation = instance['transform'][-1]
+			new_instance.orientation = instance['transform'][-1]
 			basic_scene.room.add(new_instance)
 	# print 'human', list(game[1]['classes'].find('Human').instances)[0].resources
 	basic_game = BasicGame(basic_scene)

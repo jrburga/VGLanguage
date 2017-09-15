@@ -10,6 +10,7 @@ class BasicRoom(Room):
 	Also, should include information about object classes to make
 	querying easier.
 	'''
+	
 
 class BasicScene(Scene):
 	'''
@@ -19,8 +20,30 @@ class BasicScene(Scene):
 		Scene.__init__(self, graphics.Graphics2D(size), physics.Physics2D(1./fps), resources.Resources())
 		self.graphics.camera.size = size
 		self.fps = fps
+		self._condition_handlers = defaultdict(lambda: [])
 
 		self.add_event_handler('quit', quit)
+
+	def add_condition_handler(self, condition, callback):
+		scene = self
+		for event_trigger in condition.event_triggers:
+			self.add_event_handler(event_trigger[0], event_trigger[1])
+		self._condition_handlers[condition].append(callback)
+
+	def step(self):
+		for system in self.systems:
+			for event in system.events.get():
+				for callback in self._event_handlers[event.type]:
+					callback(self, event)
+
+		for condition in self._condition_handlers:
+			if condition.check():
+				for callback in self._condition_handlers[condition]:
+					callback(self, condition)
+
+		for system in self.systems:
+			system.update()
+
 
 	def add_instance(self, game_object):
 		self.room.add(game_object)

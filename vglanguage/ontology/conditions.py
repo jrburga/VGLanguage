@@ -1,6 +1,11 @@
-from vgengine.game import Condition, Event, Scene
 from collections import defaultdict
 from objects import *
+
+class Condition(object):
+	def __init__(self):
+		self.event_triggers = []
+	def check(self):
+		return False
 
 class InstanceCondition(Condition):
 	def __init__(self):
@@ -27,7 +32,7 @@ class Composition(InstanceCondition):
 		super(Composition, self).__init__()
 		self.conditions = conditions
 		for condition in conditions:
-			self.event_triggers.extend(condition.event_triggers)
+			self.event_triggers.extend(condition.event_triggers[:])
 
 	@property
 	def scene(self):
@@ -47,15 +52,16 @@ class Composition(InstanceCondition):
 				self._instances[class_name] = self._instances[class_name].union(condition.instances[class_name])
 		return self._instances
 
-	def test(self):
+	def check(self):
 		for condition in self.conditions:
 			condition.scene = self.scene
-		return reduce(lambda x, y: x and y, [con.test() for con in self.conditions], True)
+		return reduce(lambda x, y: x and y, [con.check() for con in self.conditions], True)
 
 class Not(InstanceCondition):
 	def __init__(self, condition):
 		super(Not, self).__init__()
 		self.condition = condition
+		self.event_triggers = condition.event_triggers[:]
 
 	@property
 	def scene(self):
@@ -68,10 +74,11 @@ class Not(InstanceCondition):
 
 	@property
 	def instances(self):
+		'''Return the compliment sets?'''
 		return self.condition.instances
 
-	def test(self):
-		return not self.condition.test()
+	def check(self):
+		return not self.condition.check()
 
 # The rest of the conditions
 class Collision(InstanceCondition):
@@ -84,7 +91,7 @@ class Collision(InstanceCondition):
 
 	def collision_triggers(self):
 		# create event handler to raise collision flags
-		def test(event):
+		def check(event):
 			check = [False, False]
 			check_r = [False, False]
 			if self.classes[0] in event.game_objects[0].names:
@@ -99,7 +106,7 @@ class Collision(InstanceCondition):
 
 
 		def collision(scene, event):
-			result, classes = test(event)
+			result, classes = check(event)
 			if result:
 				print 'collision', self.classes
 				self.colliding = True
@@ -107,7 +114,7 @@ class Collision(InstanceCondition):
 				self._instances[classes[1]].add(event.game_objects[1])
 
 		def separation(scene, event):
-			result, classes = test(event)
+			result, classes = check(event)
 			if result:
 				print 'separation', self.classes
 				self.colliding = False
@@ -118,7 +125,7 @@ class Collision(InstanceCondition):
 
 		return [('collision', collision), ('separation', separation)]
 
-	def test(self):
+	def check(self):
 		return self.colliding
 
 

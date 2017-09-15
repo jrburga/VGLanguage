@@ -1,8 +1,5 @@
 # Used as an abstraction for the parser to generate the effects used by the game.
 # Need to add that effects also apply to groups, not just instances.
-
-from copy import deepcopy
-
 def Combo(*actions):
 	def action(go):
 		for ax in actions:
@@ -34,23 +31,69 @@ def InstanceEffect(class_name, args, apply_effect):
 					
 		for instance in instances:
 			if args:
-				apply_effect(instance, args)
+				apply_effect(scene, instance, args)
 			else:
-				apply_effect(instance)
+				apply_effect(scene, instance)
 	return effect
 
 # the actual effects
 
-def IncrementResource(instance, (resource, value)):
-	instance.resources[resource].value += value
+def IncrementAttribute(scene, instance, (attr, value)):
+	if hasattr(instance, attr):
+		setattr(instance, attr, getattr(instance, attr) + value)
+	elif attr in instance.resources:
+		instance.resources[attr].value += value
+	else:
+		raise NameError('instance does not have attribute or resource')
+	
 
-def SetResource(instance, (resource, value)):
-	instance.resources[resource].value = value
+def SetAttribute(scene, instance, (attr, value)):
+	if hasattr(instance, attr):
+		setattr(instance, attr, value)
+	elif attr in instance.resources:
+		instance.resources[resource].value = value
 
-def Kill(instance):
+# Toggle Action? Need to be certain of activation/deactivation, though.
+def ActivateAction(scene, instance, (action_name)):
+	pass
+
+def DeactiveAction(scene, instance, (action_name)):
+	pass
+
+# It's unclear to me what these function would actually do
+# Do they just change their names?
+# Do they also change all their properties to align with their new class/group?
+def ChangeGroup(scene, instance, (group_name)):
+	pass
+
+def ChangeClass(scene, instance, (class_name)):
+	pass
+
+# 
+# Could create problems with the physics? I know that objects
+# that are directly on top of each other are resolved smoothly,
+# but it could be weird.
+def Clone(scene, instance):
+	'''Makes a copy of the instance at the instance's location.'''
+	pass
+
+def Kill(scene, instance):
 	print 'killing -- ', instance, instance.components
 	instance.kill()
 	# print instance.components
+
+def Create(scene, class_name, position, orientation):
+	# Wait, actually, now that thing about not having access to the whole game object is kind of a problem
+	pass
+
+# Non deterministic events.
+def Teleport(scene, instance, (class_name2)):
+	'''Randomly moves instance to an instance of class_name2'''
+	pass
+
+def Spawn(scene, class_name1, (class_name2)):
+	'''Randomly creates an instance of class_name1 at the location of class_name2'''
+	pass
 	
-def Nothing():
+def Nothing(scene):
 	pass

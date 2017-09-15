@@ -145,6 +145,7 @@ class Instance(game.GameObject):
 		super(Instance, self).__init__(
 			*_class.create_components()
 		)
+
 		# print self.body.gravity
 
 		# for shape in self.body.shapes:
@@ -241,15 +242,15 @@ class Instance(game.GameObject):
  			return self.body.velocity.get_angle()
 
  	@property
- 	def rotation(self):
+ 	def orientation(self):
  		'''
 		Angle in radians
  		'''
  		if self.body:
  			return self.body.angle
 
- 	@rotation.setter
- 	def rotation(self, new_orientation):
+ 	@orientation.setter
+ 	def orientation(self, new_orientation):
  		'''
 		Angle in radians
  		'''

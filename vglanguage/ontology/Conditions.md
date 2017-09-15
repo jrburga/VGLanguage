@@ -81,7 +81,7 @@ A rule is initialized with and modifies it's own set of classes containing all s
 
 and a condition that modifies multiple sets looks like this
 
-`Condition(X, Y) ==> X' := X' intersect {x : x in X such that Condition(y)} and Y' = Y'= intersect {y : y in Y such that Condition(y)}
+`Condition(X, Y) ==> X' := X' intersect {x : x in X such that Condition(y)} and Y' = Y'= intersect {y : y in Y such that Condition(y)}`
 
 So instead of returning a new class, it modifies it's copies of the respective class. It does this for two reasons: to keep track of instances involved in all conditions, and then to have a final set of things left by the time we get to the effects that apply to them.
 
@@ -132,7 +132,7 @@ Condition(X, any=True) ==> X' := X' intersect {X} IF Condition(x) for ALL x in X
 							  := X' intersect {}  ELSE
 `
 
-Side note: I've introduced the * argument as a wildcard, so Condition(*) and Effect(*) apply to everything, or, in the case of complete heirarchy, the 'root' set. Another notation we could use is Condition(X)*, which would mean return all or nothing.
+Side note: I've introduced the * argument as a wildcard, so Condition(*) and Effect(*) apply to everything, or, in the case of complete heirarchy, the 'root' set. Another notation we could use is `Condition(X)*`, which would mean return all or nothing.
 
 ## Idea 2, Semantics and Formal Logic
 

@@ -134,6 +134,7 @@ Classes
 	}
 Rules 
 	Collision(Ball, Ball) > Kill(Brick)
+	InstanceCount(Brick, 0, =) > Kill(Ball)
 
 ActionSets 
 	LeftRight {

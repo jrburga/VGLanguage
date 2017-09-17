@@ -10,6 +10,7 @@ class BasicRoom(Room):
 	Also, should include information about object classes to make
 	querying easier.
 	'''
+	pass
 	
 
 class BasicScene(Scene):
@@ -25,28 +26,28 @@ class BasicScene(Scene):
 		self.add_event_handler('quit', quit)
 
 	def add_condition_handler(self, condition, callback):
-		scene = self
+		condition.scene = self
 		for event_trigger in condition.event_triggers:
 			self.add_event_handler(event_trigger[0], event_trigger[1])
 		self._condition_handlers[condition].append(callback)
 
-	def step(self):
-		for system in self.systems:
-			for event in system.events.get():
-				for callback in self._event_handlers[event.type]:
-					callback(self, event)
-
+	def _handle_conditions(self):
 		for condition in self._condition_handlers:
-			if condition.check():
+			if condition.check(self):
 				for callback in self._condition_handlers[condition]:
 					callback(self, condition)
 
-		for system in self.systems:
-			system.update()
-
+	def step(self):
+		# In order for conditions to work, need to handle events first
+		self._handle_events()
+		self._handle_conditions()
+		self._update_systems()
 
 	def add_instance(self, game_object):
 		self.room.add(game_object)
+
+	def get_instances(self):
+		return self.room.game_objects
 
 class BasicGame(Game):
 	'''

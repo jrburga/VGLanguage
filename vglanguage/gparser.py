@@ -184,6 +184,13 @@ class Tree2Game(Transformer):
 		# possibly a nifty little thing to use.
 		return 'root'
 
+
+	eq = lambda self, _: lambda x, y: x == y
+	le = lambda self, _: lambda x, y: x <= y
+	ge = lambda self, _: lambda x, y: x >= y
+	gt = lambda self, _: lambda x, y: x > y
+	lt = lambda self, _: lambda x, y: x < y
+	ne = lambda self, _: lambda x, y: x != y
 	true  = lambda self, _: True
 	false = lambda self, _: False
 	infinity = lambda self, _: 10**50

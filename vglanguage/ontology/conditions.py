@@ -4,22 +4,14 @@ from objects import *
 class Condition(object):
 	def __init__(self):
 		self.event_triggers = []
-	def check(self):
+
+	def check(self, scene):
 		return False
 
 class InstanceCondition(Condition):
 	def __init__(self):
 		Condition.__init__(self)
 		self._instances = defaultdict(lambda: set())
-		self._scene = None
-
-	@property
-	def scene(self):
-		return self._scene
-
-	@scene.setter
-	def scene(self, new_scene):
-		self._scene = new_scene
 
 	@property
 	def instances(self):
@@ -35,16 +27,6 @@ class Composition(InstanceCondition):
 			self.event_triggers.extend(condition.event_triggers[:])
 
 	@property
-	def scene(self):
-		return self._scene
-
-	@scene.setter
-	def scene(self, new_scene):
-		self._scene = new_scene
-		for condition in self.conditions:
-			condition.scene = new_scene
-
-	@property
 	def instances(self):
 		self._instances = defaultdict(lambda: set())
 		for condition in self.conditions:
@@ -52,10 +34,8 @@ class Composition(InstanceCondition):
 				self._instances[class_name] = self._instances[class_name].union(condition.instances[class_name])
 		return self._instances
 
-	def check(self):
-		for condition in self.conditions:
-			condition.scene = self.scene
-		return reduce(lambda x, y: x and y, [con.check() for con in self.conditions], True)
+	def check(self, scene):
+		return reduce(lambda x, y: x and y, [con.check(scene) for con in self.conditions], True)
 
 class Not(InstanceCondition):
 	def __init__(self, condition):
@@ -64,20 +44,11 @@ class Not(InstanceCondition):
 		self.event_triggers = condition.event_triggers[:]
 
 	@property
-	def scene(self):
-		return self._scene
-
-	@scene.setter
-	def scene(self, new_scene):
-		self._scene = new_scene
-		self.condition.scene = new_scene
-
-	@property
 	def instances(self):
 		'''Return the compliment sets?'''
 		return self.condition.instances
 
-	def check(self):
+	def check(self, scene):
 		return not self.condition.check()
 
 # The rest of the conditions
@@ -87,9 +58,9 @@ class Collision(InstanceCondition):
 		self.classes = [class_name1, class_name2]
 		self.colliding = False
 
-		self.event_triggers = self.collision_triggers()
+		self.event_triggers = self._collision_triggers()
 
-	def collision_triggers(self):
+	def _collision_triggers(self):
 		# create event handler to raise collision flags
 		def check(event):
 			check = [False, False]
@@ -125,10 +96,24 @@ class Collision(InstanceCondition):
 
 		return [('collision', collision), ('separation', separation)]
 
-	def check(self):
+	def check(self, scene):
 		return self.colliding
 
-
+class InstanceCount(InstanceCondition):
+	def __init__(self, (class_name, value, operator)):
+		print operator
+		super(InstanceCount, self).__init__()
+		self._op = operator
+		self.value = value
+		self.class_name = class_name
+	def check(self, scene):
+		self._instances[self.class_name] = set()
+		for instance in scene.get_instances():
+			if self.class_name in instance.names:
+				self._instances[self.class_name].add(instance)
+		if self._op(len(self._instances[self.class_name]), self.value):
+			return True
+		return False
 
 # if __name__ == '__main__':
 # 	simple_scene = Scene()

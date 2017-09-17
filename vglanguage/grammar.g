@@ -72,6 +72,12 @@ value: string
      | "True" -> true
      | "False"-> false
      | "*"    -> all
+     | "="    -> eq
+     | "!="   -> ne
+     | "<="   -> le
+     | ">="   -> ge
+     | ">"    -> gt
+     | "<"    -> lt
 vector: "(" number ("," number)* ")"
 string: CNAME 
 number: SIGNED_NUMBER

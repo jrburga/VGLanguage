@@ -11,7 +11,11 @@ instance: vector [":" assignments]
 // ***************
 game: game_header game_desc
 game_header: "Game" "<" (function | string) [":" assignments ":"]
-game_desc: (class_set | groups_set | rules_set | termination_set | action_set)*
+game_desc: (class_set 
+           | groups_set 
+           | rules_set 
+           | termination_set 
+           | action_set)*
 
 // ActionSets
 // ***************

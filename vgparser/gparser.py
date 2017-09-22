@@ -1,7 +1,7 @@
 from lark import Lark, Transformer
 from collections import defaultdict
 
-from ontology import *
+from grammar import *
 
 import pprint
 

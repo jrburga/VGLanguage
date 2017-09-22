@@ -2,6 +2,7 @@ from ontology import *
 import gparser
 import pprint
 
+
 def CreateGame(game_string, level_string):
 	pp = pprint.PrettyPrinter(indent=4)
 	game = gparser.game_parser.parse(game_string)

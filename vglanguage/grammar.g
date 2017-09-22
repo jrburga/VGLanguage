@@ -66,7 +66,7 @@ negfunction: "~" function
 compound_name: string ">" string 
 
 value: string   
-	 | vector
+	| vector
      | number
      | "inf"  -> infinity
      | "True" -> true

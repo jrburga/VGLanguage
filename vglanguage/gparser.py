@@ -171,14 +171,16 @@ class Tree2Game(Transformer):
 		return tuple(vector)
 
 	def function(self, args):
-		return eval(args[0])(args[1:])
+		# [function, arg1, arg2, arg3, arg4]
+		return eval(args[0])(*args[1:])
 
 	def component(self, args):
 		return [eval(args[0]), args[1:]]
 
 	def negfunction(self, (function, )):
 		# function = [Not(function[0])] + function[1:]
-		return Not(function)
+		function
+		return fu
 
 	def all(self, all):
 		# possibly a nifty little thing to use.
@@ -205,3 +207,5 @@ with open('grammar.g') as g:
 	
 
 # 	def class(self, description):
+
+

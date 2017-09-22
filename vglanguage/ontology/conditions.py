@@ -53,7 +53,7 @@ class Not(InstanceCondition):
 
 # The rest of the conditions
 class Collision(InstanceCondition):
-	def __init__(self, (class_name1, class_name2)):
+	def __init__(self, class_name1, class_name2):
 		super(Collision, self).__init__()
 		self.classes = [class_name1, class_name2]
 		self.colliding = False
@@ -63,8 +63,6 @@ class Collision(InstanceCondition):
 	def _collision_triggers(self):
 		# create event handler to raise collision flags
 		def check(event):
-			check = [False, False]
-			check_r = [False, False]
 			if self.classes[0] in event.game_objects[0].names:
 				if self.classes[1]  in event.game_objects[1].names:
 					return (True, (self.classes[0], self.classes[1]))
@@ -97,11 +95,13 @@ class Collision(InstanceCondition):
 		return [('collision', collision), ('separation', separation)]
 
 	def check(self, scene):
+		for instance in scene.instances:
+			for colliding_objects in instance.collision_set:
+				
 		return self.colliding
 
 class InstanceCount(InstanceCondition):
-	def __init__(self, (class_name, value, operator)):
-		print operator
+	def __init__(self, class_name, value, operator):
 		super(InstanceCount, self).__init__()
 		self._op = operator
 		self.value = value
@@ -114,6 +114,44 @@ class InstanceCount(InstanceCondition):
 		if self._op(len(self._instances[self.class_name]), self.value):
 			return True
 		return False
+
+# I just realized, this is going to be parsed in the language...
+class CreationCondition(InstanceCondition):
+	def __init__(self, class_name, event_name):
+		super(CreationCondition, self).__init__()
+		self.class_name = class_name
+		self.event_triggers = self._creation_triggers(event_name)
+		self.instance_set = set()
+		self.creation_flag = False
+		self.type = event_name
+
+	def _creation_triggers(self, event_name):
+		def trigger(scene, event):
+			# print 'creation condition triggered', self.type, self.class_name
+			if self.class_name in event.game_object.names:
+				# print 'creation condition triggered', self.type
+				self.instance_set.add(event.game_object)
+				self.creation_flag = True
+
+		return [(event_name, trigger)]
+
+	def check(self, scene):
+		if self.instance_set:
+			self._instances[self.class_name] = self.instance_set
+		self.instance_set = set()
+		creation_flag = self.creation_flag
+		self.creation_flag = False
+		return creation_flag
+
+class Killed(CreationCondition):
+	def __init__(self, class_name):
+		super(Killed, self).__init__(class_name[0], 'kill')
+
+
+class Created(CreationCondition):
+	def __init__(self, class_name):
+		super(Created, self).__init__(class_name[0], 'create')
+
 
 # if __name__ == '__main__':
 # 	simple_scene = Scene()

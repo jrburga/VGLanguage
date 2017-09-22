@@ -37,83 +37,12 @@ def CreateGame(game_string, level_string):
 			new_instance = Instance(classes[_class])
 			new_instance.position = instance['transform'][:-1]
 			new_instance.orientation = instance['transform'][-1]
-			basic_scene.room.add(new_instance)
+			basic_scene.add_instance(new_instance)
 	# print 'human', list(game[1]['classes'].find('Human').instances)[0].resources
 	basic_game = BasicGame(basic_scene)
 	return basic_game 
 
 if __name__ == '__main__':
-# 	game_string = '''
-
-# Game < SideView : gravity=(0, 0) :
-# #################################
-# #   Comments are pretty cool    #
-# #################################  
-# Classes  # This is a Comment
-# 	Bird : gravity=(0, -100) : {
-# 		Chicken : color=RED :
-# 		Duck {
-# 			Mallard : color=GREEN :
-# 			Whitetail : color=WHITE :
-# 		}
-# 	}
-# 	Fish : gravity=(0, 100) : {
-# 		Trout  : color=BLUE   :
-# 		Tuna   : color=YELLOW :
-# 		Salmon : color=SALMON   :
-# 	}
-# 	Human : actionset=BasicMotion  
-# 			controller=Keyboard 
-# 			actionset=BasicMotion
-# 			health=RESOURCE(100)
-# 			gravity=(0, 0)
-# 			shape=CIRCLE(5)
-# 			color=LIGHTBLUE :
-
-# 	Platform : bodytype=STATIC 
-# 			   shape=RECT(100, 10) :
-# Rules
-# 	Collision(Bird, Human) > Kill(Fish), Kill(Human)
-# ActionSets
-# 	BasicMotion {
-# 		UP   > Move((0 , 1), 100)
-# 		DOWN > Move((0 ,-1), 100)
-# 		LEFT > Move((-1, 0), 100)
-# 		RIGHT > Move((1 , 0), 100)
-# 		NONE > Move((0, 0), 0)
-# 	}
-# 	'''
-
-# 	level_string = '''
-# Level
-# Mallard {
-# 	(0, 60, 0)
-# }
-# Trout {
-# 	(0, -60, 0)
-# }
-# Chicken {
-# 	(30, 60, 0)
-# }	
-# Tuna {
-# 	(-30, -60, 0)
-# }
-# Whitetail {
-# 	(-30, 60, 0)
-# }
-# Salmon {
-# 	(30, -60, 0)
-# 	(-60, -60, 0)
-# 	(-60, -60, 0)
-# }
-# Human {
-# 	(0, 0, 0)
-# }
-# Platform {
-# 	(0, -100, 0)
-# }
-# '''
-
 	game_string = '''
 Game < SideView : gravity = (0, 0) :
 
@@ -133,8 +62,9 @@ Classes
 			   controller=SpeedLimiter :
 	}
 Rules 
-	Collision(Ball, Ball) > Kill(Brick)
-	InstanceCount(Brick, 0, =) > Kill(Ball)
+	Collision(Brick, Ball) > Kill(Brick)
+	InstanceCount(all, 0, =) > Kill(Ball)
+	# Killed(Ball)
 
 ActionSets 
 	LeftRight {
@@ -156,7 +86,6 @@ Wall {
 }
 Ball {
 	(0, -50, 0)
-	(0, -60, 0)
 }
 Brick {
 	(-130, 0, 0)

@@ -1,5 +1,6 @@
 from vgengine import game
 from vgengine.systems import graphics, physics, resources
+# from cbd import 
 from collections import defaultdict
 from components import *
 
@@ -176,6 +177,7 @@ class Instance(game.GameObject):
 
 
 	def kill(self):
+		game.Event(self.system_trigger, 'kill', **{'game_object': self}).trigger()
 		self._class.instances.remove(self)
 		if self.room:
 			self.room.remove(self)

@@ -31,14 +31,14 @@ def InstanceEffect(class_name, args, apply_effect):
 					
 		for instance in instances:
 			if args:
-				apply_effect(scene, instance, args)
+				apply_effect(scene, instance, *args)
 			else:
 				apply_effect(scene, instance)
 	return effect
 
 # the actual effects
 
-def IncrementAttribute(scene, instance, (attr, value)):
+def IncrementAttribute(scene, instance, attr, value):
 	if hasattr(instance, attr):
 		setattr(instance, attr, getattr(instance, attr) + value)
 	elif attr in instance.resources:
@@ -47,26 +47,26 @@ def IncrementAttribute(scene, instance, (attr, value)):
 		raise NameError('instance does not have attribute or resource')
 	
 
-def SetAttribute(scene, instance, (attr, value)):
+def SetAttribute(scene, instance, attr, value):
 	if hasattr(instance, attr):
 		setattr(instance, attr, value)
 	elif attr in instance.resources:
 		instance.resources[resource].value = value
 
 # Toggle Action? Need to be certain of activation/deactivation, though.
-def ActivateAction(scene, instance, (action_name)):
+def ActivateAction(scene, instance, action_name):
 	pass
 
-def DeactiveAction(scene, instance, (action_name)):
+def DeactiveAction(scene, instance, action_name):
 	pass
 
 # It's unclear to me what these function would actually do
 # Do they just change their names?
 # Do they also change all their properties to align with their new class/group?
-def ChangeGroup(scene, instance, (group_name)):
+def ChangeGroup(scene, instance, group_name):
 	pass
 
-def ChangeClass(scene, instance, (class_name)):
+def ChangeClass(scene, instance, class_name):
 	pass
 
 # 
@@ -78,7 +78,7 @@ def Clone(scene, instance):
 	pass
 
 def Kill(scene, instance):
-	print 'killing -- ', instance, instance.components
+	# print 'killing -- ', instance, instance.components
 	instance.kill()
 	# print instance.components
 
@@ -87,11 +87,11 @@ def Create(scene, class_name, position, orientation):
 	pass
 
 # Non deterministic events.
-def Teleport(scene, instance, (class_name2)):
+def Teleport(scene, instance, class_name2):
 	'''Randomly moves instance to an instance of class_name2'''
 	pass
 
-def Spawn(scene, class_name1, (class_name2)):
+def Spawn(scene, class_name1, class_name2):
 	'''Randomly creates an instance of class_name1 at the location of class_name2'''
 	pass
 	

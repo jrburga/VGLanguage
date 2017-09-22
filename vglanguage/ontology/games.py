@@ -44,6 +44,9 @@ class BasicScene(Scene):
 		self._update_systems()
 
 	def add_instance(self, game_object):
+		# game_object.system_trigger = self.resources
+		game_object.system_trigger = self.resources
+		Event(game_object.system_trigger, 'create', **{'game_object': game_object}).trigger()
 		self.room.add(game_object)
 
 	def get_instances(self):
@@ -66,6 +69,9 @@ class BasicGame(Game):
 
 	def run(self):
 		super(BasicGame, self).run(self.fps)
+
+	def _handle_events(self):
+		
 
 
 if __name__ == '__main__':

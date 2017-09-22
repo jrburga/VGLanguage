@@ -30,16 +30,22 @@ key_inputs: key_input ("&" key_input)
 action: function
 // ****************
 
+// TerminationRules
+// ****************
+terminationrules: "TerminationRules" terminationrule+
+terminationrule: conditions [">" effects]
+// ****************
+
 // Rules
 // ****************
 rules: "Rules" rule+
 rule: conditions ">" effects
+// ****************
+
 conditions: condition ["&" condition]
 effects: effect ["," effect]
 condition: function | negfunction
 effect: function
-// ****************
-
 function: name "(" (param ["," param])? ")"
 negfunction: "~" function
 param: name | value

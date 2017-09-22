@@ -1,39 +1,56 @@
 // GameDescription
 // ****************
-game_description: game_header game_body
-game_header: "Game"
-game_body: ( classes
-		   | groups
-		   | rules
-		   | termination_rules
-		   | actions_sets)*
+game: header body
+header: "Game"
+body: (classes
+	  | groups)
 
 // Classes
 // ****************
-classes: "Classes" vgdlclass+
-vgdlclass: NAME -> name
-class_descs: class_desc+
-class_desc: description
-description: class_name [":" assignments]
-
-
-
-// Rules
+classes: "Classes" vgdlclasses
+vgdlclasses: class_hierarchy+
+class_hierarchy: vgdlclass ["{" vgdlclasses "}"]
+vgdlclass: name [":" props]
 // ****************
-rules_set: "Rules" rules
-rules: rule+
-rule: condition+ ">" effect+
-condition: 
-effect: 
 
-NAME: /([A-Z][a-z])/
+// Groups
+// ****************
+groups: "Groups" group+
+group: name ":" props
+// ****************
+
+// ActionSets
+// ****************
+actionsets: "ActionSets" actionset+
+actionset: name "{" mappings "}"
+mappings: mapping+
+mapping: key_input [":" active_flag] ">" action
+action: name
+
+function: name "(" (param ["," param])? ")"
+param: name | value
+
+props: prop+
+prop: key "=" value
+
+key_input: UCASE -> string
+active_flag: "active" | "inactive"
+name: UCAMEL -> string
+key: LCAMEL -> string
+
+value: NUMBER  -> number
+     | "True"  -> true
+     | "False" -> false
+
+UCAMEL: /([A-Z]([a-z]|[A-Z])*)/
+LCAMEL: /([a-z]([a-z]|[A-Z])*)/
+UCASE: /([A-Z])+/
 
 COMMENT: "#"+ /./* NEWLINE
 
+%import common.NUMBER
 %import common.NEWLINE
 %import common.WS
-%import common.UCASE_LETTER
-%import common.LCASE_LETTER
 
 %ignore WS
 %ignore COMMENT

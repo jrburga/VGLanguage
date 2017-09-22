@@ -25,11 +25,23 @@ actionsets: "ActionSets" actionset+
 actionset: name "{" mappings "}"
 mappings: mapping+
 mapping: key_inputs [":" active_flag] ">" actions
-actions: action ("," action)
+actions: action ["," action]
 key_inputs: key_input ("&" key_input)
 action: function
+// ****************
+
+// Rules
+// ****************
+rules: "Rules" rule+
+rule: conditions ">" effects
+conditions: condition ["&" condition]
+effects: effect ["," effect]
+condition: function | negfunction
+effect: function
+// ****************
 
 function: name "(" (param ["," param])? ")"
+negfunction: "~" function
 param: name | value
 
 props: prop+

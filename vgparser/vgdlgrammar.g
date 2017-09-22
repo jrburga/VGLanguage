@@ -24,8 +24,10 @@ group: name ":" props
 actionsets: "ActionSets" actionset+
 actionset: name "{" mappings "}"
 mappings: mapping+
-mapping: key_input [":" active_flag] ">" action
-action: name
+mapping: key_inputs [":" active_flag] ">" actions
+actions: action ("," action)
+key_inputs: key_input ("&" key_input)
+action: function
 
 function: name "(" (param ["," param])? ")"
 param: name | value

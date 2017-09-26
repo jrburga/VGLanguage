@@ -63,8 +63,14 @@ class Tree2PyVGDL(Transformer):
 	false = lambda self, _: False
 
 
-# with open('vgdlgrammar.g') as g:
-# 	game_parser = Lark(g.read(), start='game', parser='lalr', transformer=Tree2PyVGDL())
+with open('vgdlgrammar.g') as g:
+	game_parser = Lark(g.read(), start='game', parser='lalr', transformer=Tree2PyVGDL())
 
-# with open('vgdlgrammar.g') as g:
-# 	level_parser = Lark(g.read(), start='level', parser='lalr', transformer=Tree2PyVGDL())
+with open('vgdlgrammar.g') as g:
+	level_parser = Lark(g.read(), start='level', parser='lalr', transformer=Tree2PyVGDL())
+
+def parse_game(game_string):
+	return game_parser.parse(game_string)
+
+def parse_level(level_string):
+	return level_parser.parse(level_string)

@@ -40,7 +40,8 @@ class VGDLClass(Group):
 
 #Action Sets
 class ActionSet(object):
-	def __init__(self, mappings):
+	def __init__(self, name, mappings):
+		self.name = name
 		self.mappings = mappings[:]
 
 class Mapping(object):
@@ -50,9 +51,8 @@ class Mapping(object):
 		self.action = action
 
 class Action(object):
-	def __init__(self, name, params):
-		self.name = name
-		self.params = params[:]
+	def __init__(self, function):
+		self.function = function
 
 class KeyInput(object):
 	def __init__(self, name):
@@ -71,11 +71,14 @@ class TerminationRule(Rule):
 		super(TerminationRule, self).__init__(conditions, effects)
 
 class Condition(object):
-	def __init__(self, name, params):
-		self.name = name
-		self.params = params[:]
+	def __init__(self, sign, function):
+		self.function = function
 
 class Effect(object):
-	def __init__(self, name, params):
+	def __init__(self, function):
+		self.function = function
+
+class Function(object):
+	def __init__(self, name, params=[]):
 		self.name = name
 		self.params = params[:]

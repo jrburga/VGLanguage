@@ -46,10 +46,10 @@ rule: conditions ">" effects
 
 conditions: condition ["&" condition]
 effects: effect ["," effect]
-condition: function | negfunction
+condition: neg? function
 effect: function
 function: name "(" (param ["," param])? ")"
-negfunction: "~" function
+neg: "~"
 param: name | value
 
 props: prop+

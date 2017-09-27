@@ -1,0 +1,95 @@
+{
+	"game_type": "SideView",
+	"props": {
+		"gravity": 1.0
+	},
+
+	"classes": {
+		"ALL": {
+			"Animal": {
+				"props" : {
+					"happy": False
+				}
+				"children": {
+					"Dog": {
+						"props": 
+						{
+							"strenth": 100,
+							"stamina": 3,
+							"controller": "ChaserAI" 
+						}
+					}
+				}
+			}
+		}
+	},
+
+	"groups": [
+		{
+			"name": "Blue",
+			"pops": {
+				"color": "BLUE"
+			}
+		}
+	],
+
+	"terminationrules": [
+		{
+			"conditions": [
+				{
+					"name": "InstanceCount",
+					"params": [
+						"Dog",
+						0,
+						"="
+					]
+				}
+			],
+			"effects": []
+		}
+	],
+
+	"actionsets": [
+		{
+			"name": "Basic",
+			"actions":	[
+				{
+					"inputs": [
+						"LEFT"
+					],
+					"effects": [
+						{
+							"name": "Move",
+							"params": [-1, 0]
+							"active": True
+						}
+					]
+				}
+			]
+		}
+	]
+
+	"rules": [
+		{
+			"conditions": [
+				{
+					"name": "Collision",
+					"params": [
+						"Dog", 
+						"Bird"
+					]
+				}
+			],
+			"effects": [
+				{
+					"name": "Kill",
+					"params": [
+						"Dog"
+					]
+				}
+			]
+		}
+	],
+
+
+}

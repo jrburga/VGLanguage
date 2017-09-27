@@ -12,6 +12,54 @@ class GameTest(unittest.TestCase):
 	def test_sample(self):
 		self.assertTrue(True)
 
+class ActionSets(unittest.TestCase):
+	def setUp(self):
+		pass
+
+	def test_actionsets(self):
+		
+
+class TerminationRulesTest(unittest.TestCase):
+	def setUp(self):
+		self.parser = parser.Lark(grammar, 
+								  start='terminationrules',
+								  parser='lalr',
+								  transformer=parser.Tree2PyVGDL())
+	def test_termrules_simple(self):
+		test_string = '''
+		TerminationRules
+			AllDead()
+		'''
+		termrules = self.parser.parse(test_string)
+		self.assertEquals(len(termrules), 1)
+		self.assertEquals(len(termrules[0].conditions), 1)
+
+
+class RuleTest(unittest.TestCase):
+	def setUp(self):
+		self.parser = parser.Lark(grammar, 
+								  start='rule',
+								  parser='lalr',
+								  transformer=parser.Tree2PyVGDL())
+
+	def test_rules_simple(self):
+		test_string = '''Condition(Dog) > Effect(Dog)'''
+		rule = self.parser.parse(test_string)
+		self.assertEqual(len(rule.conditions), 1)
+		self.assertEqual(len(rule.effects), 1)
+		
+
+	def test_rule_empty_condition(self):
+		test_string = '''Condition() > Effect(Dog)'''
+		rule = self.parser.parse(test_string)
+
+
+	def test_rule_neg_condition(self):
+		test_string = '''~Condition() > Effect(Dog)'''
+		rule = self.parser.parse(test_string)
+
+
+
 class GroupsTest(unittest.TestCase):
 	def setUp(self):
 		self.parser = parser.Lark(grammar, 

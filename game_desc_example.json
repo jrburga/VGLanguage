@@ -5,22 +5,26 @@
 	},
 
 	"classes": {
-		"ALL": {
-			"Animal": {
-				"props" : {
-					"happy": False
+			"name": "ALL",
+			"props": {},
+			"children": [
+				{
+					"name": "Dog",
+					"props": {
+						"strength": 100,
+						"stamina": 3
+					},
+					"children": []
+				},
+				{
+					"name": "Bird",
+					"props": {
+						"strength": 3,
+						"stamina": 100
+					},
+					"children": []
 				}
-				"children": {
-					"Dog": {
-						"props": 
-						{
-							"strenth": 100,
-							"stamina": 3,
-							"controller": "ChaserAI" 
-						}
-					}
-				}
-			}
+			]
 		}
 	},
 

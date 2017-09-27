@@ -1,0 +1,22 @@
+[
+	{
+		"class": "Dog",
+		"instances": [
+			{
+				"position": [0, 0],
+				"orientation": 0
+			},
+			{
+				"position": [10, 0],
+				"orientation": 0
+			}
+		],
+		"class": "Bird",
+		"instances": [
+			{
+				"position": [-10, -10],
+				"orientation": 0
+			}
+		]
+	}
+]

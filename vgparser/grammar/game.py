@@ -9,7 +9,7 @@ class Group(object):
 		self.props = {}
 		self.props.update(props)
 
-	def toDict(self):
+	def toJSON(self):
 		return {'name'    : self.name, 
 				'props'   : self.props}
 
@@ -29,10 +29,10 @@ class VGDLClass(Group):
 		self.children.remove(child)
 		child.parent = None
 
-	def toDict(self):
+	def toJSON(self):
 		return {'name': self.name,
 				'props': self.props,
-				'children': [child.toDict() 
+				'children': [child.toJSON() 
 				for child in self.children]}
 
 	def __str__(self):
@@ -47,14 +47,23 @@ class ActionSet(object):
 		self.name = name
 		self.mappings = mappings[:]
 
-	def toDict(self):
-		return {'name': self.name,}
+	def toJSON(self):
+		return {'name': self.name,
+				'mappings': [mapping.toJSON() 
+				for mapping in self.mappings]}
 
 class Mapping(object):
 	def __init__(self, key_input, action, active = True):
 		self.active = active
 		self.key_input = key_input
-		self.action = action
+		self.action = actions
+
+	def toJSON(self):
+		return {
+				'inputs' : [ki.toJSON() for ki in self.key_input],
+				'active' : self.active,
+				'actions': [act.toJSON() for act in self.actions] 
+			   }
 
 class Action(object):
 	def __init__(self, function):

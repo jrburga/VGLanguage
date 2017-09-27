@@ -60,7 +60,7 @@
 					"inputs": [
 						"LEFT"
 					],
-					"effects": [
+					"actions": [
 						{
 							"name": "Move",
 							"params": [-1, 0]

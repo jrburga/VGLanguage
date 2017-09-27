@@ -65,9 +65,26 @@ class Mapping(object):
 				'actions': [act.toJSON() for act in self.actions] 
 			   }
 
-class Action(object):
+class FuncObj(object):
 	def __init__(self, function):
 		self.function = function
+
+	def toJSON(self):
+		return self.function.toJSON()
+
+class Function(object):
+	def __init__(self, name, params=[]):
+		self.name = name
+		self.params = params[:]
+
+	def toJSON(self):
+		return {'name': self.name, 
+			    'params': self.params}
+
+class Action(FuncObj):
+	pass
+
+
 
 class KeyInput(object):
 	def __init__(self, name):
@@ -85,15 +102,8 @@ class TerminationRule(Rule):
 	def __init__(self, conditions, effects=[]):
 		super(TerminationRule, self).__init__(conditions, effects)
 
-class Condition(object):
-	def __init__(self, sign, function):
-		self.function = function
+class Condition(FuncObj):
+	pass
 
-class Effect(object):
-	def __init__(self, function):
-		self.function = function
-
-class Function(object):
-	def __init__(self, name, params=[]):
-		self.name = name
-		self.params = params[:]
+class Effect(FuncObj):
+	pass

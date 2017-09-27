@@ -70,7 +70,7 @@ class FuncObj(object):
 		self.function = function
 
 	def toJSON(self):
-		return self.function.toJSON()
+		return self.function.toJSON()	
 
 class Function(object):
 	def __init__(self, name, params=[]):

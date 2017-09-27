@@ -28,7 +28,7 @@ actionset: name "{" mappings "}"
 mappings: mapping+
 mapping: key_inputs [":" active_flag] ">" actions
 actions: action ["," action]
-key_inputs: key_input ("&" key_input)
+key_inputs: name ["&" name]
 action: function
 // ****************
 
@@ -55,7 +55,6 @@ param: name | value
 props: prop+
 prop: key "=" value
 
-key_input: UCASE -> string
 active_flag: "active" | "inactive"
 name: UCAMEL -> string
 key: LCAMEL -> string
@@ -66,7 +65,7 @@ value: NUMBER  -> number
 
 UCAMEL: /([A-Z]([a-z]|[A-Z])*)/
 LCAMEL: /([a-z]([a-z]|[A-Z])*)/
-UCASE: /([A-Z])+/
+
 
 COMMENT: "#"+ /./* NEWLINE
 

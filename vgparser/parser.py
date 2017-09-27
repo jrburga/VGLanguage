@@ -110,7 +110,7 @@ class Tree2PyVGDL(Transformer):
 			key_inputs, active, actions = mapping
 		else:
 			key_inputs, actions = mapping
-		return Mapping(key_inptus, actions, active)
+		return Mapping(key_inputs, actions, active)
 
 	###################
 	#

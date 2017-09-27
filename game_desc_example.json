@@ -55,7 +55,7 @@
 	"action_sets": [
 		{
 			"name": "Basic",
-			"actions":	[
+			"mappings":	[
 				{
 					"inputs": [
 						"LEFT"

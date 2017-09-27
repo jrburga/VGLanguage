@@ -14,10 +14,20 @@ class GameTest(unittest.TestCase):
 
 class ActionSets(unittest.TestCase):
 	def setUp(self):
-		pass
+		self.parser = parser.Lark(grammar, 
+								  start='actionsets',
+								  parser='lalr',
+								  transformer=parser.Tree2PyVGDL())
 
 	def test_actionsets(self):
-		
+		test_string = '''
+		ActionSets
+			Basic {
+				LEFT > Move()
+			}
+		'''
+		actionsets = self.parser.parse(test_string)
+		print actionsets[0].mappings[0]
 
 class TerminationRulesTest(unittest.TestCase):
 	def setUp(self):

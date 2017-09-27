@@ -10,8 +10,6 @@ class Group(object):
 		self.props.update(props)
 
 	def toDict(self):
-		return_dict = {}
-		return_dict['name'] = self.name
 		return {'name'    : self.name, 
 				'props'   : self.props}
 
@@ -31,6 +29,11 @@ class VGDLClass(Group):
 		self.children.remove(child)
 		child.parent = None
 
+	def toDict(self):
+		return {'name': self.name,
+				'props': self.props,
+				'children': [child.toDict() 
+				for child in self.children]}
 
 	def __str__(self):
 		return 'VGDLClass: %s%r' % (self.name, self.props)
@@ -43,6 +46,9 @@ class ActionSet(object):
 	def __init__(self, name, mappings):
 		self.name = name
 		self.mappings = mappings[:]
+
+	def toDict(self):
+		return {'name': self.name,}
 
 class Mapping(object):
 	def __init__(self, key_input, action, active = True):

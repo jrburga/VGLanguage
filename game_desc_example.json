@@ -25,8 +25,7 @@
 					"children": []
 				}
 			]
-		}
-	},
+		},
 
 	"groups": [
 		{
@@ -37,7 +36,7 @@
 		}
 	],
 
-	"terminationrules": [
+	"termination_rules": [
 		{
 			"conditions": [
 				{
@@ -53,7 +52,7 @@
 		}
 	],
 
-	"actionsets": [
+	"action_sets": [
 		{
 			"name": "Basic",
 			"actions":	[
@@ -71,7 +70,7 @@
 				}
 			]
 		}
-	]
+	],
 
 	"rules": [
 		{
@@ -94,6 +93,5 @@
 			]
 		}
 	],
-
 
 }

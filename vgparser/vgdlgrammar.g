@@ -3,9 +3,12 @@ level: " "
 // GameDescription
 // ****************
 game: header body
-header: "Game"
+header: "Game" ":" props
 body: (classes
-	  | groups)
+	  | groups
+	  | actionsets
+	  | terminationrules
+	  | rules)
 
 // Classes
 // ****************

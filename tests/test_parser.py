@@ -7,10 +7,15 @@ grammar = open('vgparser/vgdlgrammar.g').read()
 
 class GameTest(unittest.TestCase):
 	def setUp(self):
-		pass
-	
+		self.parser = parser.Lark(grammar, 
+								  start='game',
+								  parser='lalr',
+								  transformer=parser.Tree2PyVGDL())
 	def test_sample(self):
-		self.assertTrue(True)
+		test_string = '''
+		Game : gameType = TopDown
+		'''
+		self.parser.parse(test_string)
 
 class ActionSets(unittest.TestCase):
 	def setUp(self):

@@ -1,7 +1,8 @@
 {
-	"game_type": "SideView",
+	
 	"props": {
-		"gravity": 1.0
+		"gravity": 1.0,
+		"game_type": "SideView",
 	},
 
 	"classes": {

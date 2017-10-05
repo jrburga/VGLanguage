@@ -1,6 +1,10 @@
 class Game(object):
 	def __init__(self, props, description):
-		pass
+		self.props = {}
+		self.props.update(props)
+
+	def toJSON(self):
+		return {"props": self.props}
 
 # Group and VGDLClass
 class Group(object):
@@ -53,10 +57,10 @@ class ActionSet(object):
 				for mapping in self.mappings]}
 
 class Mapping(object):
-	def __init__(self, key_input, action, active = True):
+	def __init__(self, key_input, actions, active = True):
 		self.active = active
 		self.key_input = key_input
-		self.action = actions
+		self.actions = actions
 
 	def toJSON(self):
 		return {
@@ -102,8 +106,11 @@ class TerminationRule(Rule):
 	def __init__(self, conditions, effects=[]):
 		super(TerminationRule, self).__init__(conditions, effects)
 
-class Condition(FuncObj):
-	pass
+class Condition(object):
+	def __init__(self, sign, function):
+		self.sign = sign
+		self.function = function
 
-class Effect(FuncObj):
-	pass
+class Effect(object):
+	def __init__(self, function):
+		self.function = function

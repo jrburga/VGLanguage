@@ -9,8 +9,8 @@ ALLCLASS = 'ALLCLASS'
 ALLGROUP = 'ALLGROUP'
 
 class Tree2PyVGDL(Transformer):
-	def game(self, (props, description)):
-		return Game(props, description)
+	def game(self, (header, body)):
+		return Game(header, body)
 
 	def hierarchy(self, hierarchy):
 		root = hierarchy[0]

@@ -1,5 +1,7 @@
 {
 	"name": "TestGame", 
+	"game_type": "SideView", 
+	"gravity": 1.0, 
 	"termination_rules": [
 		{
 			"conditions": [
@@ -39,10 +41,6 @@
 			 ]
 		}
 	], 
-
-	"game_type": "SideView", 
-	"gravity": 1.0, 
-
 	"action_sets": [
 		{
 			"name": "Basic", 

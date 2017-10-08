@@ -1,5 +1,8 @@
+KEY_WORDS = ['classes', 'groups', 'rules', 'termination_rules', 'action_sets']
+
 class Game(object):
 	def __init__(self, header, body):
+		assert set(KEY_WORDS).isdisjoint(set(header.keys()))
 		self.__dict__.update(header)
 		self.body = body
 

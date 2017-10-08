@@ -1,96 +1,95 @@
 {
-	"name": "GameName",
-	"gravity": 1.0,
-	"game_type": "SideView",
-
-	"classes": {
-			"name": "ALL",
-			"props": {},
-			"children": [
-				{
-					"name": "Dog",
-					"props": {
-						"strength": 100,
-						"stamina": 3
-					},
-					"children": []
-				},
-				{
-					"name": "Bird",
-					"props": {
-						"strength": 3,
-						"stamina": 100
-					},
-					"children": []
-				}
-			]
-		},
-
-	"groups": [
-		{
-			"name": "Blue",
-			"pops": {
-				"color": "BLUE"
-			}
-		}
-	],
-
+	"name": "TestGame", 
 	"termination_rules": [
 		{
 			"conditions": [
 				{
-					"name": "InstanceCount",
-					"params": [
-						"Dog",
-						0,
-						"="
-					]
+					"params": ["Cat", 0.0, "eq"], 
+					"name": "InstanceCount"
 				}
-			],
-			"effects": []
-		}
-	],
-
-	"action_sets": [
-		{
-			"name": "Basic",
-			"mappings":	[
-				{
-					"inputs": [
-						"LEFT"
-					],
-					"actions": [
-						{
-							"name": "Move",
-							"params": [-1, 0],
-							"active": true
-						}
-					]
-				}
-			]
-		}
-	],
-
+			], 
+			"effects": []}
+	], 
 	"rules": [
 		{
 			"conditions": [
 				{
-					"name": "Collision",
-					"params": [
-						"Dog", 
-						"Bird"
-					]
+					"params": ["Dog", "Cat"], 
+					"name": "Collision"
 				}
-			],
+			], 
 			"effects": [
 				{
-					"name": "Kill",
-					"params": [
-						"Dog"
-					]
+					"params": ["Cat"], 
+					"name": "Kill"
+				}
+			]
+		}, 
+		{
+			"conditions": [{"params": ["Dog", "Cat", 10.0, "lt"], "name": "Distance"}],
+			 "effects": [
+			 	{
+			 		"params": ["Cat", "Flee"], 
+			 		"name": "ChangeController"
+			 	}, 
+			 	{
+			 		"params": ["Dog", "Chase"], 
+			 		"name": "ChangeController"
+			 	}
+			 ]
+		}
+	], 
+
+	"game_type": "SideView", 
+	"gravity": 1.0, 
+
+	"action_sets": [
+		{
+			"name": "Basic", 
+			"mappings": [
+				{
+					"inputs": ["UP"], 
+					"actions": [{"params": [0.0, 1.0], "name": "Move"}]
+				}, 
+				{
+					"inputs": ["DOWN"], 
+					"actions": [{"params": [0.0, -1.0], "name": "Move"}]
+				}, 
+				{
+					"inputs": ["LEFT"], 
+					"actions": [{"params": [-1.0, 0.0], "name": "Move"}]
+				}, 
+				{
+					"inputs": ["RIGHT"], 
+					"actions": [{"params": [1.0, 0.0], "name": "Move"}]
 				}
 			]
 		}
-	],
+	], 
 
+	"classes": [
+		{
+			"children": [
+				{
+					"children": [], 
+					"name": "Dog", 
+					"props": {"stamina": 10.0}
+				}, 
+				{
+					"children": [], 
+					"name": "Cat", 
+					"props": {"stamina": 20.0}
+				}
+			], 
+			"name": "Animal", 
+			"props": {"strength": 100.0}
+		}
+	], 
+
+	"groups": [
+		{
+			"name": "BlueThings", 
+			"props": {"color": "BLUE"}
+		}
+	]
 }

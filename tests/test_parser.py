@@ -20,6 +20,10 @@ class LevelTest(unittest.TestCase):
 
 			Dog {
 				(0, 0, 0)
+				(1, 2, 3)
+			}
+			Cat {
+				(4, 5, 0)
 			}
 		"""
 		level = self.parser.parse(test_string)
@@ -28,7 +32,7 @@ class LevelTest(unittest.TestCase):
 class LevelBodyTest(unittest.TestCase):
 	def setUp(self):
 		self.parser = parser.Lark(grammar, 
-								  start='level_body',
+								  start='instances',
 								  parser='lalr',
 								  transformer=parser.Tree2PyVGDL())
 
@@ -71,39 +75,47 @@ class GameTest(unittest.TestCase):
 		'''
 		game = self.parser.parse(test_string)
 		self.assertEqual(game.name, 'TestGame')
+		print game
 
 
 class ActionSets(unittest.TestCase):
 	def setUp(self):
 		self.parser = parser.Lark(grammar, 
-								  start='actionsets',
+								  start='actionset',
 								  parser='lalr',
 								  transformer=parser.Tree2PyVGDL())
 
 	def test_actionsets(self):
 		test_string = '''
-		ActionSets
-			Basic {
-				LEFT > Move()
-			}
+		Basic {
+			LEFT > Move()
+		}
 		'''
-		actionsets = self.parser.parse(test_string)['action_sets']
+		actionset = self.parser.parse(test_string)
 		# print actionsets[0].mappings[0]
+
+	def test_multi_inputs(self):
+		test_string = '''
+		Basic {
+			LEFT & RIGHT > Move()
+		}
+		'''
+		actionset = self.parser.parse(test_string)
+		# print actionsets[0].mappings[0]
+
 
 class TerminationRulesTest(unittest.TestCase):
 	def setUp(self):
 		self.parser = parser.Lark(grammar, 
-								  start='terminationrules',
+								  start='terminationrule',
 								  parser='lalr',
 								  transformer=parser.Tree2PyVGDL())
 	def test_termrules_simple(self):
 		test_string = '''
-		TerminationRules
-			AllDead()
+		AllDead()
 		'''
-		termrules = self.parser.parse(test_string)['termination_rules']
-		self.assertEquals(len(termrules), 1)
-		self.assertEquals(len(termrules[0].conditions), 1)
+		termrule = self.parser.parse(test_string)
+		self.assertEquals(len(termrule.conditions), 1)
 
 
 class RuleTest(unittest.TestCase):
@@ -118,16 +130,25 @@ class RuleTest(unittest.TestCase):
 		rule = self.parser.parse(test_string)
 		self.assertEqual(len(rule.conditions), 1)
 		self.assertEqual(len(rule.effects), 1)
+
+	def test_rules_simple(self):
+		test_string = '''Condition(Dog) > Effect(Dog), 
+		Effect(Cat)'''
+		rule = self.parser.parse(test_string)
+		self.assertEqual(len(rule.conditions), 1)
+		self.assertEqual(len(rule.effects), 2)
 		
 
 	def test_rule_empty_condition(self):
 		test_string = '''Condition() > Effect(Dog)'''
 		rule = self.parser.parse(test_string)
+		self.assertEqual(rule.conditions[0].sign, "pos")
 
 
 	def test_rule_neg_condition(self):
 		test_string = '''~Condition() > Effect(Dog, Cat)'''
 		rule = self.parser.parse(test_string)
+		self.assertEqual(rule.conditions[0].sign, "neg")
 
 
 

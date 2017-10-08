@@ -1,6 +1,6 @@
 //LveelDescription
-level: header level_body
-level_body: "Instances" class_instances+
+level: header instances
+instances: "Instances" class_instances+
 class_instances: name "{" instance_vecs "}"
 instance_vecs: instance_vec+ 
 instance_vec: vector
@@ -18,9 +18,9 @@ game_body: (classes
 // Classes
 // ****************
 classes: "Classes" vgdlclasses
-vgdlclasses: class_hierarchy+
-class_hierarchy: vgdlclass ["{" vgdlclasses "}"]
-vgdlclass: name [":" props]
+vgdlclasses: vgdlclass+
+vgdlclass: class_desc ["{" vgdlclasses "}"]
+class_desc: name [":" props]
 // ****************
 
 // Groups
@@ -34,9 +34,10 @@ group: name ":" props
 actionsets: "ActionSets" actionset+
 actionset: name "{" mappings "}"
 mappings: mapping+
-mapping: key_inputs [":" active_flag] ">" actions
+mapping: key_inputs ">" actions
 actions: action ["," action]
-key_inputs: name ["&" name]
+key_inputs: key_input ["&" key_input]
+key_input: name
 action: function
 // ****************
 
@@ -50,24 +51,28 @@ terminationrule: conditions [">" effects]
 // ****************
 rules: "Rules" rule+
 rule: conditions ">" effects
-// ****************
-
 conditions: condition ["&" condition]
 effects: effect ["," effect]
 condition: neg? function
 effect: function
-function: name params
-neg: "~"
-params: "(" (param ["," param])? ")"
-param: value | cmp
+
+// ****************
 
 props: prop+
 prop: key "=" value
 
+function: name params
+params: "(" (param ("," param)*)? ")"
+param: value | cmp
+neg: "~"
+
+vector: "(" number ("," number)* ")"
+
 value: number
-	 | bool
+     | bool
      | name
      | vector
+     | function
 
 cmp: "="  -> eq
    | "<"  -> lt
@@ -76,13 +81,12 @@ cmp: "="  -> eq
    | ">=" -> le
    | "<=" -> ge
 
-active_flag: "active" | "inactive"
+bool: "True"  -> true
+  | "False" -> false
+
 name: UCAMEL -> string
 key: USCORE -> string
 number: SIGNED_NUMBER
-vector: "(" number ("," number)* ")"
-bool: "True"  -> true
-	| "False" -> false
 
 UCAMEL: /([A-Z]([a-zA-Z0-9])*)/
 USCORE: /([a-z]([a-z_])*)/

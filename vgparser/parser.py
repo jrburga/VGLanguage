@@ -4,8 +4,6 @@ from collections import defaultdict
 from grammar import *
 
 # grammar = open('vgdlgrammar.g').read()
-
-ALLCLASS = 'ALL'
 class Tree2PyVGDL(Transformer):
 
 	def header(self, header):
@@ -17,12 +15,14 @@ class Tree2PyVGDL(Transformer):
 
 	# Level
 	#####################
-	def level(self, (header, body)):
-		# print header, body
-		return Level(header, body)
+	def level(self, level):
+		return Level(*level)
 
-	def level_body(self, class_instances):
-		return class_instances
+	def instances(self, instances):
+		all_instances = []
+		for instance_list in instances:
+			all_instances += instance_list
+		return all_instances
 
 	def class_instances(self, (name, vecs)):
 		instances = []
@@ -43,41 +43,36 @@ class Tree2PyVGDL(Transformer):
 
 	# Game
 	#####################
-	def game(self, (header, body)):
-		return Game(header, body)
+	def game(self, game):
+		return Game(*game)
 
 	def game_body(self, args):
 		body = {}
 		for arg in args:
 			body.update(arg)
 		return body
-
-	def hierarchy(self, hierarchy):
-		root = hierarchy[0]
-		children = hierarchy[1:]
-		if children: children = children[0]
-		root.add_children(*children)
-		return root		
 	######################
 	#
 
 	# Classes 
 	###################
 	def classes(self, (classes, )):
-		root_class = VGDLClass(ALLCLASS, children=classes)
-		return {'classes': root_class}
+		return {'classes': classes}
 
 	def vgdlclasses(self, vgdlclasses):
 		return vgdlclasses
 
-	def class_hierarchy(self, hierarchy):
-		return self.hierarchy(hierarchy)
-
 	def vgdlclass(self, vgdlclass):
-		name = vgdlclass[0]
-		props = vgdlclass[1:]
-		if props: props = props[0]
-		return VGDLClass(name, props)
+		children = vgdlclass[1] if len(vgdlclass) > 1 else []
+		vgdlclass = vgdlclass[0]
+		vgdlclass['children'] = children
+		return VGDLClass(**vgdlclass)
+
+	def class_desc(self, class_desc):
+		desc = {}
+		desc['name'] = class_desc[0]
+		desc['props'] = class_desc[1] if len(class_desc) > 1 else {}
+		return desc
 	####################
 	# 
 
@@ -99,27 +94,23 @@ class Tree2PyVGDL(Transformer):
 	def rules(self, rules):
 		return {'rules': rules}
 
-	def rule(self, (conditions, effects)):
-		return Rule(conditions, effects)
+	def rule(self, rule):
+		return Rule(*rule)
 
-	def effects(self, (effects)):
+	def effects(self, effects):
 		return effects
 
-	def conditions(self, (conditions)):	
-		# print conditions
+	def conditions(self, conditions):	
 		return conditions
 
-	def condition(self, (condition)):
-		
-		sign = lambda func: func()
-		if len(condition) > 1:
-			sign, condition = condition
-		else:
-			condition = condition[0]
-		return Condition(sign, condition)
+	def condition(self, condition):
+		sign = condition[0] if len(condition) > 1 else "pos"
+		condition = condition[-1]
+		condition['sign'] = sign
+		return Condition(**condition)
 
-	def effect(self, (effect)):
-		return Effect(effect)
+	def effect(self, (effect, )):
+		return Effect(**effect)
 	###################
 	#
 
@@ -146,19 +137,26 @@ class Tree2PyVGDL(Transformer):
 	def mappings(self, mappings):
 		return mappings
 
-	def mapping(self, mapping):
-		active = True
-		if len(mapping) > 2:
-			key_inputs, active, actions = mapping
-		else:
-			key_inputs, actions = mapping
-		return Mapping(key_inputs, actions, active)
+	def mapping(self, (key_inputs, actions)):
+		return Mapping(key_inputs, actions)
+
+	def actions(self, actions):
+		return actions
+
+	def action(self, (action, )):
+		return Action(**action)
+
+	def key_inputs(self, key_inputs):
+		return key_inputs
+
+	def key_input(self, (name, )):
+		return KeyInput(name)
 
 	###################
 	#
 
-	def function(self, function):
-		return Function(*function)
+	def function(self, (name, params)):
+		return {'name': name, 'params': params}
 
 	def params(self, params=[]):
 		return params
@@ -179,12 +177,13 @@ class Tree2PyVGDL(Transformer):
 	def vector(self, values):
 		return tuple(values)
 
+	def string(self, (string, )):
+		return str(string)
 
-	neg = lambda self, _: lambda func: not func()
+	def number(self, (number, )):
+		return float(number)
 
-	string = lambda self, (string, ): str(string)
-
-	number = lambda self, (number, ): float(number)
+	neg = lambda self, _: "neg" # lambda func: not func()
 
 	true = lambda self, : True
 	false = lambda self, _: False

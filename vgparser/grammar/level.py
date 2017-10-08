@@ -1,6 +1,7 @@
+
 class Level(object):
 	def __init__(self, header, body):
-		assert instances not in header
+		assert 'instances' not in header
 		self.__dict__.update(header)
 		self.instances = body[:]
 

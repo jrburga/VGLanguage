@@ -1,9 +1,7 @@
 {
-	
-	"props": {
-		"gravity": 1.0,
-		"game_type": "SideView",
-	},
+	"name": "GameName",
+	"gravity": 1.0,
+	"game_type": "SideView",
 
 	"classes": {
 			"name": "ALL",
@@ -64,8 +62,8 @@
 					"actions": [
 						{
 							"name": "Move",
-							"params": [-1, 0]
-							"active": True
+							"params": [-1, 0],
+							"active": true
 						}
 					]
 				}

@@ -5,12 +5,52 @@ from grammar import *
 
 # grammar = open('vgdlgrammar.g').read()
 
-ALLCLASS = 'ALLCLASS'
-ALLGROUP = 'ALLGROUP'
-
+ALLCLASS = 'ALL'
 class Tree2PyVGDL(Transformer):
+
+	def header(self, header):
+		name = header[0]
+		props = header[1] if len(header) > 1 else {}
+		header = {'name': header[0]}
+		header.update(props)
+		return header
+
+	# Level
+	#####################
+	def level(self, (header, body)):
+		# print header, body
+		return Level(header, body)
+
+	def level_body(self, class_instances):
+		return class_instances
+
+	def class_instances(self, (name, vecs)):
+		instances = []
+		for pos, ori in vecs:
+			instances.append(Instance(name, pos, ori))
+		
+		return instances
+
+	def instance_vecs(self, vecs):
+		return vecs
+
+
+	def instance_vec(self, (vec, )):
+		return vec[:2], vec[2]
+
+	#####################
+	#
+
+	# Game
+	#####################
 	def game(self, (header, body)):
 		return Game(header, body)
+
+	def game_body(self, args):
+		body = {}
+		for arg in args:
+			body.update(arg)
+		return body
 
 	def hierarchy(self, hierarchy):
 		root = hierarchy[0]
@@ -18,12 +58,14 @@ class Tree2PyVGDL(Transformer):
 		if children: children = children[0]
 		root.add_children(*children)
 		return root		
+	######################
+	#
 
 	# Classes 
 	###################
 	def classes(self, (classes, )):
 		root_class = VGDLClass(ALLCLASS, children=classes)
-		return root_class
+		return {'classes': root_class}
 
 	def vgdlclasses(self, vgdlclasses):
 		return vgdlclasses
@@ -42,7 +84,7 @@ class Tree2PyVGDL(Transformer):
 	# Groups 
 	####################
 	def groups(self, groups):
-		return groups
+		return {'groups': groups}
 		
 	def group(self, vgdlgroup):
 		name = vgdlgroup[0]
@@ -55,7 +97,7 @@ class Tree2PyVGDL(Transformer):
 	# Rules 
 	###################
 	def rules(self, rules):
-		return rules
+		return {'rules': rules}
 
 	def rule(self, (conditions, effects)):
 		return Rule(conditions, effects)
@@ -84,7 +126,7 @@ class Tree2PyVGDL(Transformer):
 	# Termination Rules 
 	###################
 	def terminationrules(self, terminationrules):
-		return terminationrules
+		return {'termination_rules': terminationrules}
 
 	def terminationrule(self, terminationrule):
 		return TerminationRule(*terminationrule)
@@ -95,7 +137,7 @@ class Tree2PyVGDL(Transformer):
 	# Action Sets
 	###################
 	def actionsets(self, actionsets):
-		return actionsets
+		return {'action_sets': actionsets}
 
 	def actionset(self, actionset):
 		name, mappings = actionset
@@ -118,7 +160,10 @@ class Tree2PyVGDL(Transformer):
 	def function(self, function):
 		return Function(*function)
 
-	def param(self, (param)):
+	def params(self, params=[]):
+		return params
+
+	def param(self, (param, )):
 		return param
 
 	def props(self, props):
@@ -127,6 +172,12 @@ class Tree2PyVGDL(Transformer):
 
 	def prop(self, (key, value)):
 		return {key: value}
+
+	def value(self, (value, )):
+		return value
+
+	def vector(self, values):
+		return tuple(values)
 
 
 	neg = lambda self, _: lambda func: not func()
@@ -137,6 +188,13 @@ class Tree2PyVGDL(Transformer):
 
 	true = lambda self, : True
 	false = lambda self, _: False
+
+	eq = lambda self, _: "eq" # lambda x, y: x == y
+	lt = lambda self, _: "lt" # lambda x, y: x < y
+	gt = lambda self, _: "gt" # lambda x, y: x > y
+	ne = lambda self, _: "ne" # lambda x, y: x != y
+	le = lambda self, _: "le" # lambda x, y: x >= y
+	ge = lambda self, _: "ge" # lambda x, y: x <= y
 
 
 # with open('vgdlgrammar.g') as g:

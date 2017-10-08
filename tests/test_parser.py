@@ -3,7 +3,48 @@ from vgparser import parser
 
 # print parser.Tree2PyVGDL
 
-grammar = open('vgparser/vgdlgrammar.g').read()
+grammar = open('vgparser/vgdl.g').read()
+
+class LevelTest(unittest.TestCase):
+	def setUp(self):
+		self.parser = parser.Lark(grammar, 
+								  start='level',
+								  parser='lalr',
+								  transformer=parser.Tree2PyVGDL())
+
+	def test_level(self):
+		test_string = """
+		Level1 : size=(100, 100)
+
+		Instances
+
+			Dog {
+				(0, 0, 0)
+			}
+		"""
+		level = self.parser.parse(test_string)
+		# print level
+
+class LevelBodyTest(unittest.TestCase):
+	def setUp(self):
+		self.parser = parser.Lark(grammar, 
+								  start='level_body',
+								  parser='lalr',
+								  transformer=parser.Tree2PyVGDL())
+
+	def test_body(self):
+		test_string = '''
+		Instances
+		Dog {
+			(0, 0, 0)
+			(1, 2, 3)
+		}
+		Cat {
+			(4, 5, 6)
+		}
+		'''
+		body = self.parser.parse(test_string)
+		# print body
 
 class GameTest(unittest.TestCase):
 	def setUp(self):
@@ -13,9 +54,24 @@ class GameTest(unittest.TestCase):
 								  transformer=parser.Tree2PyVGDL())
 	def test_sample(self):
 		test_string = '''
-		Game : gameType = TopDown
+		TestGame
+			Classes
+				Dog
+			Rules
+				Condition() > Effect()
+			Groups
+				Animal : color=BLUE
+			ActionSets
+				UpDown {
+					UP   > Move(0, 1)
+					DOWN > Move(0, -1)
+				}
+			TerminationRules
+				Condition()
 		'''
-		self.parser.parse(test_string)
+		game = self.parser.parse(test_string)
+		self.assertEqual(game.name, 'TestGame')
+
 
 class ActionSets(unittest.TestCase):
 	def setUp(self):
@@ -31,8 +87,8 @@ class ActionSets(unittest.TestCase):
 				LEFT > Move()
 			}
 		'''
-		actionsets = self.parser.parse(test_string)
-		print actionsets[0].mappings[0]
+		actionsets = self.parser.parse(test_string)['action_sets']
+		# print actionsets[0].mappings[0]
 
 class TerminationRulesTest(unittest.TestCase):
 	def setUp(self):
@@ -45,7 +101,7 @@ class TerminationRulesTest(unittest.TestCase):
 		TerminationRules
 			AllDead()
 		'''
-		termrules = self.parser.parse(test_string)
+		termrules = self.parser.parse(test_string)['termination_rules']
 		self.assertEquals(len(termrules), 1)
 		self.assertEquals(len(termrules[0].conditions), 1)
 
@@ -70,7 +126,7 @@ class RuleTest(unittest.TestCase):
 
 
 	def test_rule_neg_condition(self):
-		test_string = '''~Condition() > Effect(Dog)'''
+		test_string = '''~Condition() > Effect(Dog, Cat)'''
 		rule = self.parser.parse(test_string)
 
 
@@ -87,7 +143,7 @@ class GroupsTest(unittest.TestCase):
 		Groups
 			GroupA : strength = 100
 		'''
-		groups = self.parser.parse(test_string)
+		groups = self.parser.parse(test_string)['groups']
 		self.assertEqual(len(groups), 1)
 		group = groups[0]
 		self.assertEqual(group.name, 'GroupA')
@@ -95,108 +151,99 @@ class GroupsTest(unittest.TestCase):
 class ClassesTest(unittest.TestCase):
 	def setUp(self):
 		self.parser = parser.Lark(grammar, 
-								  start='classes', 
+								  start='vgdlclasses', 
 								  parser='lalr',
 								  transformer=parser.Tree2PyVGDL())
 
 	def test_class_simple(self):
 		test_string = '''
-		Classes
-			Dog
+		Dog
 		'''
-		root_class = self.parser.parse(test_string)
-		self.assertEqual(len(root_class.children), 1)
-		child = root_class.children[0]
+		classes = self.parser.parse(test_string)
+		self.assertEqual(len(classes), 1)
+		child = classes[0]
 		self.assertEqual(child.name, 'Dog')
 
 	def test_class_two(self):
 		test_string = '''
-		Classes
-			Dog
-			Cat
+		Dog
+		Cat
 		'''
-		root_class = self.parser.parse(test_string)
-		self.assertEqual(len(root_class.children), 2)
+		classes = self.parser.parse(test_string)
+		self.assertEqual(len(classes), 2)
 	
 
 	def test_class_props(self):
 		test_string = '''
-		Classes
-			Dog : strength=100
+		Dog : strength=100
 		'''
-		root_class = self.parser.parse(test_string)
-		self.assertEqual(len(root_class.children), 1)
-		child = root_class.children[0]
+		classes = self.parser.parse(test_string)
+		self.assertEqual(len(classes), 1)
+		child = classes[0]
 		self.assertEqual(child.props['strength'], 100)
 
 	def test_class_syntax(self):
 		test_string = '''
-		Classes
-			Dog : strength=100
-			Cat : strength=50
+		Dog : strength=100
+		Cat : strength=50
 		'''
-		root_class = self.parser.parse(test_string)
-		self.assertEqual(len(root_class.children), 2)
-		cat = [child for child in root_class.children if child.name == 'Cat'][0]
+		classes = self.parser.parse(test_string)
+		self.assertEqual(len(classes), 2)
+		cat = [child for child in classes if child.name == 'Cat'][0]
 		self.assertEqual(cat.props['strength'], 50)
 
 	def test_class_hierarchy(self):
 		test_string = '''
-		Classes
-			Animal {
-				Dog 
-				Cat
-			}
+		Animal {
+			Dog 
+			Cat
+		}
 		'''
-		root_class = self.parser.parse(test_string)
-		self.assertEqual(len(root_class.children), 1)
-		animal = root_class.children[0]
+		classes = self.parser.parse(test_string)
+		self.assertEqual(len(classes), 1)
+		animal = classes[0]
 		self.assertEqual(len(animal.children), 2)
 
 	def test_class_hierarchy_with_props(self):
 		test_string = '''
-		Classes
-			Animal : strength = 100 {
-				Dog 
-				Cat
-			}
+		Animal : strength = 100 {
+			Dog 
+			Cat
+		}
 		'''
-		root_class = self.parser.parse(test_string)
-		animal = root_class.children[0]
+		classes = self.parser.parse(test_string)
+		animal = classes[0]
 		self.assertEqual(animal.props['strength'], 100)
-		# cat = [child for child in root_class.children if child.name == 'Cat'][0]
+		# cat = [child for child in classes if child.name == 'Cat'][0]
 		# self.assertEqual(cat.p
 
 	def test_class_hierarchy_with_child_props(self):
 		test_string = '''
-		Classes
-			Animal : strength = 50 {
-				Dog : strength = 100
-			}
+		Animal : strength = 50 {
+			Dog : strength = 100
+		}	
 		'''
-		root_class = self.parser.parse(test_string)
-		animal = root_class.children[0]
+		classes = self.parser.parse(test_string)
+		animal = classes[0]
 		dog = animal.children[0]
 		self.assertEqual(dog.props['strength'], 100)
 		self.assertEqual(animal.props['strength'], 50)
 
 	def test_class_inline_props(self):
 		test_string = '''
-		Classes
-			Animal : strength = 100 dexterity = 50
+		Animal : strength = 100 dexterity = 50
 		'''
-		root_class = self.parser.parse(test_string)
-		animal = root_class.children[0]
+		classes = self.parser.parse(test_string)
+		animal = classes[0]
 		self.assertEqual(animal.props['strength'], 100)
 		self.assertEqual(animal.props['dexterity'],  50)
 
 	def test_class_multiline_props(self):
 		test_string = '''
-		Classes
-			Animal : strength = 100
-					 dexterity = 50
+		Animal : strength = 100
+		         dexterity = 50
 		'''
-		root_class = self.parser.parse(test_string)
-		animal = root_class.children[0]
+		classes = self.parser.parse(test_string)
+		animal = classes[0]
 		self.assertEqual(animal.props['strength'], 100)
 		self.assertEqual(animal.props['dexterity'],  50)

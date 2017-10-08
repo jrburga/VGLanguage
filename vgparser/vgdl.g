@@ -1,14 +1,19 @@
-level: " "
+//LveelDescription
+level: header level_body
+level_body: "Instances" class_instances+
+class_instances: name "{" instance_vecs "}"
+instance_vecs: instance_vec+ 
+instance_vec: vector
 
 // GameDescription
 // ****************
-game: header body
-header: "Game" ":" props
-body: (classes
+game: header game_body
+header: name [":" props]
+game_body: (classes
 	  | groups
 	  | actionsets
 	  | terminationrules
-	  | rules)
+	  | rules)+
 
 // Classes
 // ****************
@@ -51,28 +56,41 @@ conditions: condition ["&" condition]
 effects: effect ["," effect]
 condition: neg? function
 effect: function
-function: name "(" (param ["," param])? ")"
+function: name params
 neg: "~"
-param: name | value
+params: "(" (param ["," param])? ")"
+param: value | cmp
 
 props: prop+
 prop: key "=" value
 
+value: number
+	 | bool
+     | name
+     | vector
+
+cmp: "="  -> eq
+   | "<"  -> lt
+   | ">"  -> gt
+   | "!=" -> ne
+   | ">=" -> le
+   | "<=" -> ge
+
 active_flag: "active" | "inactive"
 name: UCAMEL -> string
-key: LCAMEL -> string
+key: USCORE -> string
+number: SIGNED_NUMBER
+vector: "(" number ("," number)* ")"
+bool: "True"  -> true
+	| "False" -> false
 
-value: NUMBER  -> number
-     | "True"  -> true
-     | "False" -> false
-
-UCAMEL: /([A-Z]([a-z]|[A-Z])*)/
-LCAMEL: /([a-z]([a-z]|[A-Z])*)/
+UCAMEL: /([A-Z]([a-zA-Z0-9])*)/
+USCORE: /([a-z]([a-z_])*)/
 
 
 COMMENT: "#"+ /./* NEWLINE
 
-%import common.NUMBER
+%import common.SIGNED_NUMBER
 %import common.NEWLINE
 %import common.WS
 

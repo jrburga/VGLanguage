@@ -1,10 +1,13 @@
 class Game(object):
-	def __init__(self, props, description):
-		self.props = {}
-		self.props.update(props)
+	def __init__(self, header, body):
+		self.__dict__.update(header)
+		self.body = body
 
 	def toJSON(self):
-		return {"props": self.props}
+		description = {}
+		description['props'] = self.header
+		description.update(self.body)
+		return description
 
 # Group and VGDLClass
 class Group(object):
@@ -86,13 +89,15 @@ class Function(object):
 			    'params': self.params}
 
 class Action(FuncObj):
-	pass
-
-
+	def __init__(self, function, active=True):
+		super(Action, self).__init__(function)
 
 class KeyInput(object):
 	def __init__(self, name):
 		self.name = name
+
+	def toJSON(self):
+		return self.name
 
 #Rules
 class Rule(object):
@@ -101,8 +106,12 @@ class Rule(object):
 		self.conditions = conditions[:]
 		self.effects = effects[:]
 
+	def toJSON(self):
+		return {"conditions": [condition.toJSON() for condition in self.conditions],
+				"effects": [effect.toJSON() for effect in self.effects]}
+
 class TerminationRule(Rule):
-	'''A special kind of rule that ends the game'''
+	'''A special kind of rule that ends the game (as well as optional effects)'''
 	def __init__(self, conditions, effects=[]):
 		super(TerminationRule, self).__init__(conditions, effects)
 
@@ -111,6 +120,12 @@ class Condition(object):
 		self.sign = sign
 		self.function = function
 
+	def toJSON(self):
+		return self.function.toJSON()
+
 class Effect(object):
 	def __init__(self, function):
 		self.function = function
+
+	def toJSON(self):
+		return self.function.toJSON()
